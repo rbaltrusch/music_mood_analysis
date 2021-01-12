@@ -19,14 +19,14 @@ def analyse(samplerate, data):
         tonality: string (see consts.MUSICAL_NOTE_NAMES)
     '''
     bpm = tempo.analyse(samplerate, data)
-    tonality_, _ = tonality.analyse(samplerate, data)
-    return bpm, tonality_
+    tonality_, key = tonality.analyse(samplerate, data)
+    return bpm, tonality_, key
 
 def _test():
     samplerate_, data_ = siw.read(r'test.wav')
     chunk_sample_rate, chunk_data = downconvert_chunk(samplerate_, data_, chunk_index=0)
-    bpm, tonality_ = analyse(chunk_sample_rate, chunk_data)
-    return bpm, tonality_
+    bpm, tonality_, key = analyse(chunk_sample_rate, chunk_data)
+    return bpm, tonality_, key
 
 if __name__ == '__main__':
-    _test()
+    print(_test())
