@@ -14,7 +14,7 @@ from util import timeit
 
 @timeit
 def analyse(samplerate, data):
-    dbb, k, dbbm = get_beat_distances(samplerate, data)
+    dbb, k = get_beat_distances(samplerate, data)
     dbbnrtma = getbpmnrta(samplerate, dbb)
     bpm = getbpm(samplerate, dbb, k, dbbnrtma)
     return bpm
