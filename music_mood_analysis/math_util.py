@@ -20,11 +20,11 @@ def compute_Yss(samplerate, data):
 
     Return values:
         Yss: numpy.array (one-dimensional discrete Fourier Transform)
-        Yss_f: numpy.array (Discrete Fourier Transform sample frequencies)
+        Yss_f: list (Discrete Fourier Transform sample non-zero positive frequencies)
     '''
     Yss = numpy.fft.fft(data)
     time_step = 1 / samplerate
-    Yss_f = numpy.fft.fftfreq(Yss.size, time_step)
+    Yss_f = [freq for freq in numpy.fft.fftfreq(Yss.size, time_step) if freq > 0]
     return Yss, Yss_f
 
 def get_index_of(func, data):
