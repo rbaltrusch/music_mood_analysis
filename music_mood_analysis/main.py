@@ -1,5 +1,9 @@
-'''author: Richard Baltrusch
-real-time analysis of mood in music'''
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Jan 12 14:47:09 2021
+
+@author: Korean_Crimson
+"""
 
 import scipy.io.wavfile as siw
 
