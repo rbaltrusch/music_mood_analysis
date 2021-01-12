@@ -61,7 +61,7 @@ def compute_weighted_note_counts(samplerate, data):
     for amplitude, freq in zip(amplitudes, frequencies):
         frequency_differences = [abs(_normalise(freq) - frequency) for frequency in MUSICAL_NOTE_FREQUENCIES]
         min_index = frequency_differences.index(min(frequency_differences))
-        weighted_note_counts[min_index] += amplitude
+        weighted_note_counts[min_index] += abs(amplitude)
     return weighted_note_counts
 
 def _adjust(note_counts, index):
