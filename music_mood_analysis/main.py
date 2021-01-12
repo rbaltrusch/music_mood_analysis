@@ -27,8 +27,8 @@ def analyse(samplerate, data):
     return bpm, tonality_, key
 
 def _test():
-    samplerate, data_ = siw.read(r'test.wav')
-    chunk_sample_rate, chunk_data = downconvert_chunk(samplerate, data_, chunk_index=0)
+    samplerate_, data_ = siw.read(r'test.wav')
+    chunk_sample_rate, chunk_data = downconvert_chunk(samplerate_, data_, chunk_index=0)
     bpm, tonality_, key = analyse(chunk_sample_rate, chunk_data)
     return bpm, tonality_, key
 

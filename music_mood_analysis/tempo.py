@@ -5,53 +5,64 @@ Created on Tue Jan 12 15:07:35 2021
 @author: Korean_Crimson
 """
 
+import math
+
 import plots
 from consts import get_beat_distance_constants
-from consts import BEAT_DISTANCE_HYPOTHESIS_ALLOWANCE_PERCENTAGE as allowance_percentage
 from math_util import init_zero_list
 from util import timeit
 
 @timeit
 def analyse(samplerate, data):
-    beat_distances = compute_beat_distances(samplerate, data)
-    bpm = compute_bpm(samplerate, beat_distances)
+    dbb, k = get_beat_distances(samplerate, data)
+    dbbnrtma = getbpmnrta(samplerate, dbb)
+    bpm = getbpm(samplerate, dbb, k, dbbnrtma)
     return bpm
 
-def compute_local_maximum_values(samplerate, data):
+def get_local_maximum_values(samplerate, data):
     '''Beat detection algorithm '''
     data = [x for x in data if x > 0]
     beat_constant_min, beat_constant_max = get_beat_distance_constants(samplerate)
     local_maximum_values = init_zero_list(len(data))
-    current_local_maximum_value = max(data[:beat_constant_min])
+    current_local_maximum_value = 0
     local_maximum_value_counter = 0
     for i, data_point in enumerate(data):
-        if data_point >= current_local_maximum_value and beat_constant_min < local_maximum_value_counter:
-            set_max_flag = True
-        elif local_maximum_value_counter > beat_constant_max:
-            set_max_flag = True
-        else:
-            set_max_flag = False
-            local_maximum_value_counter += 1
-
-        if set_max_flag:
+        if data_point >= current_local_maximum_value and beat_constant_min < local_maximum_value_counter < beat_constant_max:
             local_maximum_values[i - 1] = 0
             local_maximum_value_counter = 0
             local_maximum_values[i] = data_point
-            current_local_maximum_value = data_point
+            current_local_maximum_value = local_maximum_values[i]
+        else:
+            local_maximum_value_counter += 1
 
     plots.plot(local_maximum_values, data, ylabel='Local maximum values')
     return local_maximum_values
 
-def compute_beat_distances(samplerate, data):
-    local_maximum_values = compute_local_maximum_values(samplerate, data)
-    indices = [i for i, x in enumerate(local_maximum_values) if x > 0] #non zero indices
-    for i in range(len(indices) - 1):
-        print(indices[i + 1] , indices[i] )
-    beat_distances = [indices[i + 1] - indices[i] for i in range(len(indices) - 1)]
-    plots.plot(beat_distances, ylabel='duration between beats')
-    return beat_distances
+def get_beat_distances(samplerate, data):
+    beat_constant_min, _ = get_beat_distance_constants(samplerate)
+    local_maximum_values = get_local_maximum_values(samplerate, data)
+    dbbsize = math.ceil(len(data) / beat_constant_min) #bpsmax*time is the maximum amount of possible beats we could have, so this is our array size for the dbb array below
+    dbb = init_zero_list(dbbsize)
+    k = 0 #counter for dbb array
+    for i, local_maximum_value in enumerate(local_maximum_values):
+        if k >= len(dbb):
+            break
+        #if the lmv element is zero, keep counting until we reach a nonzero element
+        if local_maximum_value:
+            k += 1
+        else:
+            dbb[k] += 1
 
-def find_first_hypothesis(samplerate, durations_between_beats):
+    plots.plot(dbb, ylabel='duration between beats')
+    return dbb, k
+
+def getbpmnrta(samplerate, dbb):
+    beatconstantmin, beatconstantmax = get_beat_distance_constants(samplerate)
+    dbbnz = [x for x in dbb if x != 0]
+    dbbnrtma = [sum(dbbnz[:i]) / i for i in range(1, len(dbbnz)-2)]
+    return dbbnrtma
+
+def firstdbbhypo(samplerate, durations_between_beats):
     '''This formulates our first dbb (duration between beats hypothesis)'''
     beat_constant_min, beat_constant_max = get_beat_distance_constants(samplerate)
     for duration_between_beats in durations_between_beats:
@@ -62,45 +73,57 @@ def find_first_hypothesis(samplerate, durations_between_beats):
         hypothesis = 0
     return hypothesis
 
-def compute_bpm(samplerate, beat_distances):
+def setdbbparams(dbbhypo):
+    dbbsum = dbbhypo 
+    dbbc = 1 
+    dbbflag, dbbflaggedvalue = resetdbbflag()
+    return dbbsum, dbbc, dbbflag, dbbflaggedvalue
+
+def resetdbbflag():
+    dbbflag = 0
+    dbbflaggedvalue = [0,0]
+    return dbbflag, dbbflaggedvalue
+
+def getbpm(samplerate, dbb, k, dbbnrtma):
     '''This section finds the tempo of the piece'''
     beatconstantmin, beatconstantmax = get_beat_distance_constants(samplerate)
-    hypothesis = find_first_hypothesis(samplerate, beat_distances)
-    selected_distances = []
-    flagged_values = [] #beat distances that didnt agree with current hypothesis
-    flag = ''
-    for beat_distance in beat_distances:
-        if flag == 'next':
-            hypothesis = beat_distance
-            flag = ''
-
-        #current hypothesis stays if less than two flagged values
-        if len(flagged_values) < 2:
-            if beatconstantmax <= hypothesis <= beatconstantmin and _is_in_bounds(beat_distance, hypothesis):
-                flagged_values = []
-                selected_distances.append(beat_distance)
-                hypothesis = sum(selected_distances) / len(selected_distances)
-            else:
-                flagged_values.append(beat_distance)
-        elif _are_closely_matching(flagged_values):
-            hypothesis = sum(flagged_values) / 2
-            selected_distances, flagged_values = [hypothesis], []
+    dbbhypo=firstdbbhypo(samplerate, dbb)
+    dbbsum=0
+    dbbhypo_ap=0.1 #dbb hypothesis allowance percentage 
+    dbbc=1 # dbb counter
+    dbbflag=0 #count how often current hypothesis was wrong 
+    dbbflaggedvalue=init_zero_list(2) # the flagged dbb that didnt agree with current hypothesis goes here 
+    L=0
+    for o in range(L,int(k-1)):
+        if dbbflag<2:
+            #current hypothesis stays 
+            if dbbhypo<=beatconstantmin and dbbhypo>=beatconstantmax:
+                dbbhypo_lb=dbbhypo*(1-dbbhypo_ap) #dbb hypothesis lower bound
+                dbbhypo_hb=dbbhypo*(1+dbbhypo_ap) #dbb hypothesis higher bound
+                if dbb[L]>=dbbhypo_lb and dbb[L]<=dbbhypo_hb:
+                    dbbflag, dbbflaggedvalue=resetdbbflag()
+                    dbbsum+=dbb[L]
+                    dbbavg=dbbsum/dbbc
+                    dbbhypo=dbbavg
+                    dbbc+=1
+                else:
+                    dbbflaggedvalue[dbbflag]=dbb[L]
+                    dbbflag+=1
+        elif L<10: 
+            if abs(dbbflaggedvalue[0]-dbbflaggedvalue[1])/int(sum(dbbflaggedvalue)/2)<0.1:
+                dbbhypo=sum(dbbflaggedvalue)/2 #set a new hypothesis 
+                dbbsum, dbbc, dbbflag, dbbflaggedvalue=setdbbparams(dbbhypo)
+            else: 
+                dbbhypo=dbb[L+1]
+                dbbsum, dbbc, dbbflag, dbbflaggedvalue=setdbbparams(dbbhypo)
         else:
-            flag = 'next'
-            selected_distances, flagged_values = [hypothesis], []
+            if dbbhypo<=dbbnrtma[L]*(1+dbbhypo_ap) and dbbhypo>=dbbnrtma[L]*(1-dbbhypo_ap):
+                dbbflag, dbbflaggedvalue=resetdbbflag()
+            else:
+                dbbhypo=dbbnrtma[L]
+                dbbsum, dbbc, dbbflag, dbbflaggedvalue=setdbbparams(dbbhypo)
+        L+=1
 
-    if selected_distances:
-        avg_beat_distance = sum(selected_distances) / len(selected_distances)
-        bpm = (samplerate / avg_beat_distance) * 60
-    else:
-        bpm = 0
-    return round(bpm)
-
-def _are_closely_matching(values):
-    a, b = values
-    return abs(a - b)/ (a + b) < allowance_percentage
-
-def _is_in_bounds(value, boundary):
-    lower_bound = boundary * (1 - allowance_percentage)
-    higher_bound = boundary * (1 + allowance_percentage)
-    return lower_bound <= value <= higher_bound
+    dbbavg = dbbsum / (dbbc + 1) #average of duration between beats
+    bpm = samplerate * 60 / dbbavg if dbbavg > 0 else 0
+    return bpm

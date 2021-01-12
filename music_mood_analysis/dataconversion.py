@@ -45,10 +45,11 @@ def downconvert_chunk(samplerate, data, conversion_ratio=CONVERSION_RATIO, chunk
         downsampled_samplerate: int
         downsampled_data: numpy.array
     '''
-    data_chunk = _extract_data_chunk(samplerate, data, chunk_size, chunk_index)
+    data_chunk = _extract_data_chunk(samplerate, data, conversion_ratio, chunk_size, chunk_index)
     return downconvert(samplerate, data_chunk, conversion_ratio)
 
-def _extract_data_chunk(samplerate, data, chunk_size, chunk_index):
+def _extract_data_chunk(samplerate, data, conversion_ratio, chunk_size, chunk_index):
+    samplerate = math.ceil(samplerate / conversion_ratio)
     chunk_length = round(chunk_size * samplerate)
     index = chunk_length * chunk_index
     data_chunk = data[index:index + chunk_length]
