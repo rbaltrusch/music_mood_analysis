@@ -57,7 +57,8 @@ def compute_weighted_note_counts(samplerate, data):
     '''Returns note counts weighted by sum of amplitudes of those notes
     '''
     weighted_note_counts = init_zero_list(12)
-    for amplitude, freq in compute_Yss(samplerate, data):
+    amplitudes, frequencies = compute_Yss(samplerate, data)
+    for amplitude, freq in zip(amplitudes, frequencies):
         frequency_differences = [abs(_normalise(freq) - frequency) for frequency in MUSICAL_NOTE_FREQUENCIES]
         min_index = frequency_differences.index(min(frequency_differences))
         weighted_note_counts[min_index] += amplitude
