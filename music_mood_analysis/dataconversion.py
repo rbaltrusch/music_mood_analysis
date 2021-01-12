@@ -60,6 +60,5 @@ def _mono(stereo_data_point):
     if isinstance(stereo_data_point, numpy.int16):
         mono_data_point = int(stereo_data_point)
     else:
-        disabled = stereo_data_point.size > 1
-        mono_data_point = stereo_data_point if disabled else sum(stereo_data_point[0:2])
+        mono_data_point = sum(stereo_data_point)
     return mono_data_point
