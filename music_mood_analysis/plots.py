@@ -8,7 +8,7 @@ Created on Tue Jan 12 14:57:06 2021
 from consts import PLOTTING_ENABLED
 import matplotlib.pyplot as plt
 
-def plot(*datasets, xlabel='x', ylabel='y', title='Plot'):
+def plot(*datasets, xlabel='x', ylabel='y', title='Plot', normalised=False):
     '''Plots a number of datasets on subplots. If only one dataset is specified,
     a single plot is created. Does nothing if consts.PLOTTING_ENABLED = False.
 
@@ -24,9 +24,16 @@ def plot(*datasets, xlabel='x', ylabel='y', title='Plot'):
     if PLOTTING_ENABLED:
         plt.figure()
         for data in datasets:
+            if normalised:
+                data = _normalise(data)
             plt.subplot()
             plt.plot(data)
         plt.ylabel(ylabel)
         plt.xlabel(xlabel)
         plt.title(title)
         plt.show()
+
+def _normalise(data):
+    max_val = max(data)
+    data = [val / max_val for val in data]
+    return data
