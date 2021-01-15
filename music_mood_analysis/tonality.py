@@ -32,6 +32,7 @@ def analyse(samplerate, data):
     adjusted_note_counts = count_musical_notes(samplerate, data)
     musical_root_index = get_index_of(max, adjusted_note_counts)
     normalised_note_counts = [adjusted_note_counts[i] for i in range(musical_root_index - 12, musical_root_index)]
+    plots.plot(normalised_note_counts, title='Adjusted musical note frequency')
     tonality = _get_tonality(normalised_note_counts)
     key = MUSICAL_NOTE_NAMES[musical_root_index]
     return tonality, key
@@ -50,7 +51,7 @@ def count_musical_notes(samplerate, data):
     '''
     weighted_note_counts = compute_weighted_note_counts(samplerate, data)
     adjusted_note_counts = [_adjust(weighted_note_counts, i) for i in range(12)]
-    plots.plot(adjusted_note_counts, title='Adjusted musical note frequency')
+    plots.plot(adjusted_note_counts, weighted_note_counts, title='Adjusted musical note frequency', normalised=True)
     return adjusted_note_counts
 
 def compute_weighted_note_counts(samplerate, data):
