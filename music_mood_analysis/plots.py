@@ -5,8 +5,8 @@ Created on Tue Jan 12 14:57:06 2021
 @author: Korean_Crimson
 """
 
-from consts import PLOTTING_ENABLED
 import matplotlib.pyplot as plt
+from consts import PLOTTING_ENABLED
 
 def plot(*datasets, xlabel='x', ylabel='y', title='Plot', normalised=False):
     '''Plots a number of datasets on subplots. If only one dataset is specified,
@@ -23,11 +23,11 @@ def plot(*datasets, xlabel='x', ylabel='y', title='Plot', normalised=False):
     '''
     if PLOTTING_ENABLED:
         plt.figure()
+        _, subplot = plt.subplots(1)
         for data in datasets:
             if normalised:
                 data = _normalise(data)
-            plt.subplot()
-            plt.plot(data)
+            subplot.plot(data)
         plt.ylabel(ylabel)
         plt.xlabel(xlabel)
         plt.title(title)
