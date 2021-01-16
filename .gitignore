@@ -1,5 +1,15 @@
-*.wav
+#python
 __pycache__
+
+#music files
+*.wav
+
+#windows stuff
 desktop.ini
+
+#pytest
 reports/
 report.html
+
+#pytest-cov
+.coverage
