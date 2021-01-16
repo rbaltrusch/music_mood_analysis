@@ -74,4 +74,4 @@ def _get_tonality(note_counts):
     higher than the weighted amplitude of fourth semitone (major third), else
     returns 'major'.
     '''
-    return 'minor' if note_counts[2] > note_counts[3] else 'major'
+    return 'minor' if note_counts[3] > note_counts[4] else 'major'
