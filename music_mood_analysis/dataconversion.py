@@ -52,6 +52,9 @@ def downconvert_chunk(samplerate, data, conversion_ratio=CONVERSION_RATIO, chunk
 
 def _extract_data_chunk(samplerate, data, chunk_size, chunk_index):
     chunk_length = round(chunk_size * samplerate)
+    if chunk_length < 0:
+        chunk_length = 0
+
     index = chunk_length * chunk_index
     data_chunk = data[index:index + chunk_length]
     return data_chunk
