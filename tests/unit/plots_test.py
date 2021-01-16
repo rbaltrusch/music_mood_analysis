@@ -10,8 +10,8 @@ import pytest
 import numpy
 
 from music_mood_analysis import plots
-from music_mood_analysis import consts
 
+@pytest.mark.slow
 @pytest.mark.parametrize('datasets,kwargs', [([[random.randint(0, 100000) for _ in range(13)]], {}),
                                              ([[1, 2, 3], [2, 3, 4]], {'normalised': False}),
                                              ([[1, 2, 3], [2, 3, 4]], {'normalised': True}),
@@ -23,5 +23,5 @@ def test_plot(datasets, kwargs):
     plots.plot(*datasets, **kwargs)
 
 def test_plot_disabled():
-    consts.PLOTTING_ENABLED = False
+    plots.PLOTTING_ENABLED = False
     plots.plot([1, 2, 3])
