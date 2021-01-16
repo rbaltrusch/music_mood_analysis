@@ -6,8 +6,6 @@ Created on Tue Jan 12 14:43:43 2021
 """
 
 import math
-import numpy
-
 from consts import CONVERSION_RATIO, CHUNK_SIZE
 from util import timeit
 
