@@ -35,6 +35,7 @@ def test_init_zero_list_bad_args(sampleamount):
                                   numpy.ndarray((1000, 2))
                                   ])
 def test_compute_Yss(samplerate, data):
+    #pylint: disable=C0103
     Yss, Yss_f = math_util.compute_Yss(samplerate, data)
     assert isinstance(Yss, numpy.ndarray), 'Yss should be of type numpy.ndarray'
     assert Yss.size > 0, 'Yss should not be empty'
@@ -46,6 +47,7 @@ def test_compute_Yss(samplerate, data):
 @pytest.mark.usefixtures('samplerate')
 @pytest.mark.parametrize('data', [[]])
 def test_compute_Yss_bad_args(samplerate, data):
+    #pylint: disable=C0103
     math_util.compute_Yss(samplerate, data)
 
 @pytest.mark.xfail()
