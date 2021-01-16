@@ -11,4 +11,4 @@ from music_mood_analysis import consts
 @pytest.mark.usefixtures("samplerate")
 def test_beat_distance_constants(samplerate):
     min_distance, max_distance = consts.get_beat_distance_constants(samplerate)
-    assert min_distance < max_distance
+    assert min_distance < max_distance, "Minimum distance should be smaller than maximum distance"
