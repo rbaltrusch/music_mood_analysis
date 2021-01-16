@@ -11,3 +11,7 @@ import pytest
 @pytest.fixture
 def random_data():
     return numpy.random.rand(2000)
+
+@pytest.fixture
+def long_random_data():
+    return numpy.random.rand(60000)
