@@ -15,7 +15,7 @@ import py
 PACKAGE_NAME = 'music_mood_analysis'
 REPORTS_PATH = 'reports'
 
-def main(open_in_browser=True, keep=False):
+def main(open_in_browser=True, keep=False, include_slow=False):
     """Add package under test to PYTHONPATH, run pytest to generate html report
     and open the report in the browser.
     """
@@ -26,12 +26,16 @@ def main(open_in_browser=True, keep=False):
     report_filename = f'{timestamp}_report.html'
     report_filepath = os.path.join(REPORTS_PATH, report_filename)
 
+    command_line_args = [f'--html={report_filepath}',
+                         '--self-contained-html',
+                         f'--cov={package_path}',
+                         f'--cov-report=html']
+
+    if not include_slow:
+        command_line_args.append('-m not slow')
+
     #pylint: disable=E1101
-    py.test.cmdline.main(args=[f'--html={report_filepath}',
-                               '--self-contained-html',
-                               f'--cov={package_path}',
-                               f'--cov-report=html'
-                               ])
+    py.test.cmdline.main(args=command_line_args)
 
     if open_in_browser:
         subprocess.call(f'start {report_filepath}', shell=True) #open test report
