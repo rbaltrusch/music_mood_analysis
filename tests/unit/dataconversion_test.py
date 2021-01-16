@@ -21,7 +21,7 @@ def test_stereo_to_mono(point):
     assert isinstance(result, int), 'dataconversion._mono should return an int'
 
 
-@pytest.mark.usefixture("down_samplerate,random_data")
+@pytest.mark.usefixtures("down_samplerate", "random_data")
 @pytest.mark.parametrize("chunk_size", [0, 0.1, 1, -1])
 def test_extract_data_chunk(down_samplerate, random_data, chunk_size):
     data = random_data #fixture should be of length 2000
@@ -38,7 +38,7 @@ def test_extract_data_chunk(down_samplerate, random_data, chunk_size):
     assert len(data_chunk) == expected_length, f'Data chunk expected to be of size {expected_length}'
 
 
-@pytest.mark.usefixture("samplerate,long_random_data")
+@pytest.mark.usefixtures("samplerate", "long_random_data")
 @pytest.mark.parametrize("conversion_ratio,chunk_size", [(1, 0),
                                                          (1, 1),
                                                          (10, 1),
