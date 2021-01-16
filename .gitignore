@@ -13,3 +13,4 @@ report.html
 
 #pytest-cov
 .coverage
+htmlcov
