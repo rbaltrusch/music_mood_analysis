@@ -61,8 +61,15 @@ def _extract_data_chunk(samplerate, data, chunk_size, chunk_index):
 
 def _mono(stereo_data_point):
     '''Converts one stereo data point to one mono data point'''
-    if isinstance(stereo_data_point, (numpy.int16, int)):
-        mono_data_point = int(stereo_data_point)
-    else:
+    #figure out if stereo_data_point is iterable or not
+    try:
+        iter(stereo_data_point)
+        is_iterable = True
+    except TypeError:
+        is_iterable = False
+
+    if is_iterable:
         mono_data_point = int(sum(stereo_data_point))
+    else:
+        mono_data_point = int(stereo_data_point)
     return mono_data_point
