@@ -22,7 +22,7 @@ def downconvert(samplerate, data, conversion_ratio=CONVERSION_RATIO):
 
     Return values:
         downsampled_samplerate: int
-        downsampled_data: numpy.array
+        downsampled_data: list
     '''
     downsampled_samplerate = math.ceil(samplerate/conversion_ratio)
     downsampled_data = [_mono(data_point) for i, data_point in enumerate(data) if not i % conversion_ratio]
