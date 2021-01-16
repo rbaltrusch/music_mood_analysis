@@ -1,0 +1,5 @@
+# .coveragerc to control coverage.py (pytest-cov)
+
+[run]
+omit =
+    ../music_mood_analysis/main.py
