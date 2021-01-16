@@ -7,4 +7,5 @@ Created on Fri Jan 15 10:24:26 2021
 
 pytest_plugins = [
    "unit.fixtures.samplerate",
+   "unit.fixtures.data"
 ]
