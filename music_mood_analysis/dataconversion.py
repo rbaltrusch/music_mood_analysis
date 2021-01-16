@@ -56,8 +56,8 @@ def _extract_data_chunk(samplerate, data, chunk_size, chunk_index):
 
 def _mono(stereo_data_point):
     '''Converts one stereo data point to one mono data point'''
-    if isinstance(stereo_data_point, numpy.int16):
+    if isinstance(stereo_data_point, (numpy.int16, int)):
         mono_data_point = int(stereo_data_point)
     else:
-        mono_data_point = sum(stereo_data_point)
+        mono_data_point = int(sum(stereo_data_point))
     return mono_data_point
