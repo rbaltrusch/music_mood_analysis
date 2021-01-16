@@ -1,3 +1,5 @@
 *.wav
 __pycache__
 desktop.ini
+reports/
+report.html
