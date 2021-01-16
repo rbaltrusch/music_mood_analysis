@@ -7,6 +7,7 @@ Created on Thu Jan 14 23:39:42 2021
 
 import os
 import sys
+import time
 import datetime
 import subprocess
 import py
@@ -14,7 +15,7 @@ import py
 PACKAGE_NAME = 'music_mood_analysis'
 REPORTS_PATH = 'reports'
 
-def main(open_in_browser=False):
+def main(open_in_browser=True, keep=False):
     """Add package under test to PYTHONPATH, run pytest to generate html report
     and open the report in the browser.
     """
@@ -33,7 +34,13 @@ def main(open_in_browser=False):
                                ])
 
     if open_in_browser:
-        subprocess.call('start report.html', shell=True)
+        subprocess.call(f'start {report_filepath}', shell=True) #open test report
+        subprocess.call(f'start htmlcov/index.html', shell=True) #open coverage report
+
+    if not keep:
+        #wait 1 second until test report is open, then delete it
+        time.sleep(1)
+        os.remove(report_filepath)
 
 if __name__ == '__main__':
     main()
