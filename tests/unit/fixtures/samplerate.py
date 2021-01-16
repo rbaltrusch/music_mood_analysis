@@ -10,3 +10,8 @@ import pytest
 @pytest.fixture
 def samplerate():
     return 44100
+
+@pytest.fixture
+def down_samplerate():
+    """returns downsampled samplerate"""
+    return round(44100 / 32)
