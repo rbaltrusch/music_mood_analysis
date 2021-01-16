@@ -28,7 +28,8 @@ def main(open_in_browser=False):
     #pylint: disable=E1101
     py.test.cmdline.main(args=[f'--html={report_filepath}',
                                '--self-contained-html',
-                               f'--cov={package_path}'
+                               f'--cov={package_path}',
+                               f'--cov-report=html'
                                ])
 
     if open_in_browser:
