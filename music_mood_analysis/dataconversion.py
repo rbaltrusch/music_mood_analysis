@@ -38,12 +38,14 @@ def downconvert_chunk(samplerate, data, conversion_ratio=CONVERSION_RATIO, chunk
         samplerate: int
         data: numpy.array
         conversion_ratio: int
-        chunk_size: int (amount of data_points)
+        chunk_size: double (amount of data, specified in seconds)
         chunk_index: int (specifies extracted chunk of data, starts at 0)
 
     Return values:
         downsampled_samplerate: int
         downsampled_data: numpy.array
+
+    Example: _extract_data_chunk(samplerate, data, 1, 0) #returns the first second of data
     '''
     data_chunk = _extract_data_chunk(samplerate, data, chunk_size, chunk_index)
     return downconvert(samplerate, data_chunk, conversion_ratio)
