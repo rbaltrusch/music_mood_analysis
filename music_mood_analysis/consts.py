@@ -14,10 +14,21 @@ BPS_MAX = 3 #how many beats per second we detect at most
 BPS_MIN = 1.5 #how many beats per second we detect at least
 
 #12 frequencies starting from middle A440, up a semitone each.
-MUSICAL_NOTE_FREQUENCIES = [440, 466.16, 493.88, 523.25, 554.37, 587.33, 622.25, 659.25, 698.46, 739.99, 783.99, 830.61]
-MUSICAL_NOTE_LOWER_BOUND = 440
-MUSICAL_NOTE_HIGHER_BOUND = 881
-MUSICAL_NOTE_NAMES = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#']
+MUSICAL_NOTES = {'A': 440,
+                 'A#': 466.16,
+                 'B': 493.88,
+                 'C': 523.25,
+                 'C#': 554.37,
+                 'D': 587.33,
+                 'D#': 622.25,
+                 'E': 659.25,
+                 'F': 698.46,
+                 'F#': 739.99,
+                 'G': 783.99,
+                 'G#': 830.61}
+MUSICAL_NOTE_FREQUENCIES = list(MUSICAL_NOTES.values())
+MUSICAL_NOTE_NAMES = list(MUSICAL_NOTES.keys())
+MUSICAL_NOTE_LOWER_BOUND = MUSICAL_NOTES['A']
                       
 BEAT_DISTANCE_HYPOTHESIS_ALLOWANCE_PERCENTAGE = 0.1
 
