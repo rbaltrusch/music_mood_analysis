@@ -39,14 +39,12 @@ def compute_local_maximum_values(samplerate, data):
             local_maximum_values[i] = data_point
             current_local_maximum_value = data_point
 
-    plots.plot(local_maximum_values, data, ylabel='Local maximum values')
+    plots.plot(data, local_maximum_values, ylabel='Local maximum values', normalised=True)
     return local_maximum_values
 
 def compute_beat_distances(samplerate, data):
     local_maximum_values = compute_local_maximum_values(samplerate, data)
     indices = [i for i, x in enumerate(local_maximum_values) if x > 0] #non zero indices
-    for i in range(len(indices) - 1):
-        print(indices[i + 1] , indices[i] )
     beat_distances = [indices[i + 1] - indices[i] for i in range(len(indices) - 1)]
     plots.plot(beat_distances, ylabel='duration between beats')
     return beat_distances
