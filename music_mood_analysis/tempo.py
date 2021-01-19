@@ -6,9 +6,9 @@ Created on Tue Jan 12 15:07:35 2021
 """
 
 import plots
-from consts import get_beat_distance_constants
+from consts import get_beat_distance_constants, DECAY
 from consts import BEAT_DISTANCE_HYPOTHESIS_ALLOWANCE_PERCENTAGE as allowance_percentage
-from math_util import init_zero_list
+from math_util import init_zero_list, smooth
 from util import timeit
 
 @timeit
@@ -20,12 +20,17 @@ def analyse(samplerate, data):
 def compute_local_maximum_values(samplerate, data):
     '''Beat detection algorithm '''
     data = [x for x in data if x > 0]
+    data = smooth(data, factor=100)
     beat_constant_min, beat_constant_max = get_beat_distance_constants(samplerate)
     local_maximum_values = init_zero_list(len(data))
-    current_local_maximum_value = max(data[:beat_constant_min])
+    current_local_maximum_value = 0
     local_maximum_value_counter = 0
+    previous_max_i = 0
     for i, data_point in enumerate(data):
-        if data_point >= current_local_maximum_value and beat_constant_min < local_maximum_value_counter:
+        remove_previous_max_flag = False
+        if data_point >= current_local_maximum_value:
+            if local_maximum_value_counter < beat_constant_min:
+                remove_previous_max_flag = True
             set_max_flag = True
         elif local_maximum_value_counter > beat_constant_max:
             set_max_flag = True
@@ -34,10 +39,15 @@ def compute_local_maximum_values(samplerate, data):
             local_maximum_value_counter += 1
 
         if set_max_flag:
-            local_maximum_values[i - 1] = 0
+            if remove_previous_max_flag:
+                local_maximum_values[previous_max_i] = 0
+            previous_max_i = i
             local_maximum_value_counter = 0
             local_maximum_values[i] = data_point
             current_local_maximum_value = data_point
+
+        if local_maximum_value_counter < beat_constant_min:
+            current_local_maximum_value *= (1 - DECAY)
 
     plots.plot(data, local_maximum_values, ylabel='Local maximum values', normalised=True)
     return local_maximum_values
@@ -87,9 +97,10 @@ def compute_bpm(samplerate, beat_distances):
             flag = 'next'
             selected_distances, flagged_values = [hypothesis], []
 
+    selected_distances = selected_distances if selected_distances else [hypothesis]
     if selected_distances:
         avg_beat_distance = sum(selected_distances) / len(selected_distances)
-        bpm = (samplerate / avg_beat_distance) * 60
+        bpm = (samplerate / avg_beat_distance) * 60 if avg_beat_distance else 0
     else:
         bpm = 0
     return round(bpm)
