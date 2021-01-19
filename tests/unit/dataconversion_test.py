@@ -10,12 +10,13 @@ import pytest
 import numpy
 from music_mood_analysis import dataconversion
 
-@pytest.mark.parametrize('point', [numpy.int16(2),
-                                   13,
-                                   [2, 3],
-                                   (4, 5),
-                                   numpy.array([1, 2])
-                                   ])
+@pytest.mark.parametrize('point', [
+        numpy.int16(2),
+        13,
+        [2, 3],
+        (4, 5),
+        numpy.array([1, 2])
+        ])
 def test_stereo_to_mono(point):
     result = dataconversion._mono(point)
     assert isinstance(result, int), 'dataconversion._mono should return an int'
@@ -39,22 +40,20 @@ def test_extract_data_chunk(down_samplerate, random_data, chunk_size):
 
 
 @pytest.mark.usefixtures("samplerate", "long_random_data")
-@pytest.mark.parametrize("conversion_ratio,chunk_size", [(1, 0),
-                                                         (1, 1),
-                                                         (10, 1),
-                                                         (10, -1),
-                                                         (32, 1),
-                                                         (32, 0.05)
-                                                         ])
+@pytest.mark.parametrize("conversion_ratio,chunk_size", [
+        (1, 0),
+        (1, 1),
+        (10, 1),
+        (10, -1),
+        (32, 1),
+        (32, 0.05)
+        ])
 def test_downconvert_chunk(samplerate, long_random_data, conversion_ratio, chunk_size):
     data = long_random_data #fixture should be of length 60000
     chunk_index = 0
 
-    downsampled_samplerate, downsampled_data = dataconversion.downconvert_chunk(samplerate,
-                                                                                data,
-                                                                                conversion_ratio,
-                                                                                chunk_size,
-                                                                                chunk_index)
+    args = [samplerate, data, conversion_ratio, chunk_size, chunk_index]
+    downsampled_samplerate, downsampled_data = dataconversion.downconvert_chunk(*args)
 
     assert isinstance(downsampled_data, list), 'Downsampled data should be of type list'
     assert isinstance(downsampled_samplerate, int), 'Downsampled samplerate should be of type int'

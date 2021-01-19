@@ -27,13 +27,14 @@ def test_init_zero_list_bad_args(sampleamount):
 
 
 @pytest.mark.usefixtures('samplerate')
-@pytest.mark.parametrize('data', [[1, -1] * 2,
-                                  [1, -1] * 1000,
-                                  numpy.array([1, -1] * 2),
-                                  numpy.array([1, -1] * 10000),
-                                  numpy.ndarray((2, 2)),
-                                  numpy.ndarray((1000, 2))
-                                  ])
+@pytest.mark.parametrize('data', [
+        [1, -1] * 2,
+        [1, -1] * 1000,
+        numpy.array([1, -1] * 2),
+        numpy.array([1, -1] * 10000),
+        numpy.ndarray((2, 2)),
+        numpy.ndarray((1000, 2))
+        ])
 def test_compute_Yss(samplerate, data):
     #pylint: disable=C0103
     Yss, Yss_f = math_util.compute_Yss(samplerate, data)
@@ -58,22 +59,24 @@ def test_compute_Yss_empty_Yss_f(samplerate, data):
     assert Yss_f, 'Yss_f should not be empty'
 
 
-@pytest.mark.parametrize('func,data,expected', [(min, [1, 5, 3], 0),
-                                                (max, [1, 5, 3], 1),
-                                                (min, [0], 0),
-                                                (max, [0], 0),
-                                                (min, [-1, -1000, 2], 1),
-                                                (max, [-1000, -235, -15034, -234, -539], 3)
-                                                ])
+@pytest.mark.parametrize('func,data,expected', [
+        (min, [1, 5, 3], 0),
+        (max, [1, 5, 3], 1),
+        (min, [0], 0),
+        (max, [0], 0),
+        (min, [-1, -1000, 2], 1),
+        (max, [-1000, -235, -15034, -234, -539], 3)
+        ])
 def test_get_index_of(func, data, expected):
     index = math_util.get_index_of(func, data)
     message = f'Expected {expected}, but got {index} from math_util.get_index_of({func}, {data})'
     assert index == expected, message
 
 @pytest.mark.xfail()
-@pytest.mark.parametrize('func,data', [(min, []),
-                                       (max, []),
-                                       (lambda *args: 1, [1, 2, 3])
-                                       ])
+@pytest.mark.parametrize('func,data', [
+        (min, []),
+        (max, []),
+        (lambda *args: 1, [1, 2, 3])
+        ])
 def test_get_index_of_bad_args(func, data):
     math_util.get_index_of(func, data)
