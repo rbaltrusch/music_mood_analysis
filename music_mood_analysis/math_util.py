@@ -25,8 +25,9 @@ def compute_Yss(samplerate, data):
     #pylint: disable=C0103
     Yss = numpy.fft.fft(data)
     time_step = 1 / samplerate
-    Yss_f = [freq for freq in numpy.fft.fftfreq(Yss.size, time_step) if freq > 0]
-    return Yss, Yss_f
+    Yss_f = numpy.fft.fftfreq(Yss.size, time_step)
+    Yss, Yss_f = list(zip(*[(amplitude, freq) for amplitude, freq in zip(Yss, Yss_f) if freq > 0]))
+    return list(Yss), list(Yss_f)
 
 def get_index_of(func, data):
     """returns index of the data point which func (should be in-built min or max)
