@@ -11,12 +11,13 @@ from consts import MUSICAL_NOTE_LOWER_BOUND
 from math_util import init_zero_list, compute_Yss, get_index_of
 from util import timeit
 
-def _normalise(Yss_f):
+def _normalise(Yss_f, lower_bound=MUSICAL_NOTE_LOWER_BOUND, higher_bound=MUSICAL_NOTE_LOWER_BOUND * 2):
     if Yss_f <= 0:
         return 0
 
-    while not MUSICAL_NOTE_LOWER_BOUND <= Yss_f <= MUSICAL_NOTE_LOWER_BOUND * 2:
-        Yss_f *= 2 if Yss_f < MUSICAL_NOTE_LOWER_BOUND else 0.5
+    higher_bound = lower_bound * 2 if higher_bound / 2 < lower_bound else higher_bound
+    while not lower_bound <= Yss_f <= higher_bound:
+        Yss_f *= 2 if Yss_f < lower_bound else 0.5
     return Yss_f
 
 @timeit
