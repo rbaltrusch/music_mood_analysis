@@ -34,6 +34,9 @@ BEAT_DISTANCE_HYPOTHESIS_ALLOWANCE_PERCENTAGE = 0.1
 
 PLOTTING_ENABLED = True
 
+#Amplitude decay of current max val between beat_distance_min and beat_distance_max
+DECAY = 0.0001
+
 def get_beat_distance_constants(samplerate):
     '''returns min and max distances between beats (int, int)'''
     beat_distance_min = round(samplerate / BPS_MAX)
