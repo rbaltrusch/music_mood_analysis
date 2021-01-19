@@ -37,8 +37,8 @@ def test_init_zero_list_bad_args(sampleamount):
 def test_compute_Yss(samplerate, data):
     #pylint: disable=C0103
     Yss, Yss_f = math_util.compute_Yss(samplerate, data)
-    assert isinstance(Yss, numpy.ndarray), 'Yss should be of type numpy.ndarray'
-    assert Yss.size > 0, 'Yss should not be empty'
+    assert isinstance(Yss, list), 'Yss should be of type numpy.ndarray'
+    assert Yss, 'Yss should not be empty'
     assert isinstance(Yss_f, list), 'Yss_f should be of type list'
     assert Yss_f, 'Yss_f should not be empty'
     assert all(x > 0 for x in Yss_f), 'All elements of Yss_f should be positive and non-zero'
