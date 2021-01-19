@@ -98,7 +98,8 @@ def compute_bpm(samplerate, beat_distances):
 
 def _are_closely_matching(values):
     a, b = values
-    return abs(a - b)/ (a + b) < allowance_percentage
+    result = abs(a - b)/ (a + b) <= allowance_percentage if a + b else False
+    return result
 
 def _is_in_bounds(value, boundary):
     """Only works for positive values"""
