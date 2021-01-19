@@ -101,6 +101,7 @@ def _are_closely_matching(values):
     return abs(a - b)/ (a + b) < allowance_percentage
 
 def _is_in_bounds(value, boundary):
+    """Only works for positive values"""
     lower_bound = boundary * (1 - allowance_percentage)
     higher_bound = boundary * (1 + allowance_percentage)
     return lower_bound <= value <= higher_bound
