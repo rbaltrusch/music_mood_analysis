@@ -45,3 +45,7 @@ def get_index_of(func, data):
     """
     index, _ = func(enumerate(data), key=lambda x: x[1])
     return index
+
+def smooth(data, factor=1):
+    """Used to smooth data, returns list"""
+    return [sum(data[i:i+factor]) for i in range(len(data) - factor + 1)]
