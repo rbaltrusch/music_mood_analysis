@@ -13,7 +13,8 @@ from util import timeit
 
 @timeit
 def analyse(samplerate, data):
-    beat_distances = compute_beat_distances(samplerate, data)
+    local_maximum_values = compute_local_maximum_values(samplerate, data)
+    beat_distances = compute_beat_distances(local_maximum_values)
     bpm = compute_bpm(samplerate, beat_distances)
     return bpm
 
@@ -52,8 +53,7 @@ def compute_local_maximum_values(samplerate, data):
     plots.plot(data, local_maximum_values, ylabel='Local maximum values', normalised=True)
     return local_maximum_values
 
-def compute_beat_distances(samplerate, data):
-    local_maximum_values = compute_local_maximum_values(samplerate, data)
+def compute_beat_distances(local_maximum_values):
     indices = [i for i, x in enumerate(local_maximum_values) if x > 0] #non zero indices
     beat_distances = [indices[i + 1] - indices[i] for i in range(len(indices) - 1)]
     plots.plot(beat_distances, ylabel='duration between beats')
@@ -74,35 +74,35 @@ def compute_bpm(samplerate, beat_distances):
     '''This section finds the tempo of the piece'''
     beatconstantmin, beatconstantmax = get_beat_distance_constants(samplerate)
     hypothesis = find_first_hypothesis(samplerate, beat_distances)
+    index = beat_distances.index(hypothesis) if hypothesis else 0
     selected_distances = []
     flagged_values = [] #beat distances that didnt agree with current hypothesis
     flag = ''
-    for beat_distance in beat_distances:
+    for beat_distance in beat_distances[index:]:
         if flag == 'next':
             hypothesis = beat_distance
             flag = ''
 
-        #current hypothesis stays if less than two flagged values
-        if len(flagged_values) < 2:
-            if beatconstantmax <= hypothesis <= beatconstantmin and _is_in_bounds(beat_distance, hypothesis):
-                flagged_values = []
-                selected_distances.append(beat_distance)
-                hypothesis = sum(selected_distances) / len(selected_distances)
-            else:
-                flagged_values.append(beat_distance)
-        elif _are_closely_matching(flagged_values):
-            hypothesis = sum(flagged_values) / 2
-            selected_distances, flagged_values = [hypothesis], []
+        if beatconstantmin <= hypothesis <= beatconstantmax and _is_in_bounds(beat_distance, hypothesis):
+            flagged_values = []
+            selected_distances.append(beat_distance)
+            hypothesis = sum(selected_distances) / len(selected_distances)
         else:
-            flag = 'next'
-            selected_distances, flagged_values = [hypothesis], []
+            flagged_values.append(beat_distance)
+
+        #current hypothesis stays if less than two flagged values
+        if len(flagged_values) == 2:
+            if _are_closely_matching(flagged_values):
+                hypothesis = sum(flagged_values) / 2
+                selected_distances, flagged_values = [hypothesis], []
+            else:
+                flag = 'next'
+                selected_distances, flagged_values = [], []
 
     selected_distances = selected_distances if selected_distances else [hypothesis]
     if selected_distances:
         avg_beat_distance = sum(selected_distances) / len(selected_distances)
         bpm = (samplerate / avg_beat_distance) * 60 if avg_beat_distance else 0
-    else:
-        bpm = 0
     return round(bpm)
 
 def _are_closely_matching(values):
