@@ -5,6 +5,8 @@ Created on Sat Jan 16 17:14:44 2021
 @author: Korean_Crimson
 """
 
+import math
+import random
 import numpy
 import pytest
 from consts import MUSICAL_NOTES as notes
@@ -54,3 +56,15 @@ def data_g_major_scale(samplerate):
     frequencies = _select_notes(['G', 'A', 'B', 'C', 'D', 'E', 'F#'])
     scalings = [1, 0.5, 0.8, 0.7, 0.6, 0.4, 0.2] #scalings from experience
     return _short(_combine_notes(frequencies, scalings, samplerate=samplerate))
+
+@pytest.fixture
+@pytest.mark.usefixtures("down_samplerate")
+def random_rhythmic_data(down_samplerate):
+    samplerate = down_samplerate
+    frequency = samplerate / 2 #120 bpm
+    samples = samplerate * 5
+    
+    sine = [math.sin(2 * math.pi * x / frequency) for x in range(samples)]
+    noisy = [random.randint(25, 100) * x for x in sine]
+    capped = [random.randint(0, 75) if x < 0 else x for x in noisy] #cap negative
+    return capped
