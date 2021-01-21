@@ -15,7 +15,7 @@ import py
 PACKAGE_NAME = 'music_mood_analysis'
 REPORTS_PATH = 'reports'
 
-def main(open_in_browser=True, keep=False, include_slow=False):
+def main(open_in_browser=True, keep=False, include_slow=True, include_unreliable=True):
     """Add package under test to PYTHONPATH, run pytest to generate html report
     and open the report in the browser.
     """
@@ -33,6 +33,9 @@ def main(open_in_browser=True, keep=False, include_slow=False):
 
     if not include_slow:
         command_line_args.append('-m not slow')
+
+    if not include_unreliable:
+        command_line_args.append('m not unreliable')
 
     #pylint: disable=E1101
     py.test.cmdline.main(args=command_line_args)
