@@ -2,4 +2,5 @@
 
 [run]
 omit =
-    ../music_mood_analysis/main.py
+    ../music_mood_analysis/main.py,
+	*gui*
