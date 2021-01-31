@@ -39,7 +39,7 @@ def analyse(samplerate, data):
     plots.plot(normalised_note_counts, title='Adjusted musical note frequency')
     tonality = _get_tonality(normalised_note_counts)
     key = MUSICAL_NOTE_NAMES[musical_root_index]
-    return tonality, key
+    return tonality, key, normalised_note_counts
 
 def count_musical_notes(samplerate, data):
     '''Counts note occurence weighted by amplitude of each musical note and applies
