@@ -6,23 +6,23 @@ Created on Tue Jan 12 15:07:35 2021
 """
 
 import plots
-from consts import get_beat_distance_constants, DECAY
+from consts import BPS_MIN, BPS_MAX, DECAY
 from consts import BEAT_DISTANCE_HYPOTHESIS_ALLOWANCE_PERCENTAGE as allowance_percentage
 from math_util import init_zero_list, smooth
 from util import timeit
 
 @timeit
 def analyse(samplerate, data):
-    local_maximum_values = compute_local_maximum_values(samplerate, data)
+    local_maximum_values, data_ = compute_local_maximum_values(samplerate, data)
     beat_distances = compute_beat_distances(local_maximum_values)
     bpm = compute_bpm(samplerate, beat_distances)
-    return bpm
+    return bpm, local_maximum_values, data_
 
 def compute_local_maximum_values(samplerate, data):
     '''Beat detection algorithm '''
     data = [x for x in data if x > 0]
     data = smooth(data, factor=100)
-    beat_constant_min, beat_constant_max = get_beat_distance_constants(samplerate)
+    beat_constant_min, beat_constant_max = _get_beat_distance_constants(samplerate)
     local_maximum_values = init_zero_list(len(data))
     current_local_maximum_value = 0
     local_maximum_value_counter = 0
@@ -51,7 +51,7 @@ def compute_local_maximum_values(samplerate, data):
             current_local_maximum_value *= (1 - DECAY)
 
     plots.plot(data, local_maximum_values, ylabel='Local maximum values', normalised=True)
-    return local_maximum_values
+    return local_maximum_values, data
 
 def compute_beat_distances(local_maximum_values):
     indices = [i for i, x in enumerate(local_maximum_values) if x > 0] #non zero indices
@@ -61,7 +61,7 @@ def compute_beat_distances(local_maximum_values):
 
 def find_first_hypothesis(samplerate, durations_between_beats):
     '''This formulates our first dbb (duration between beats hypothesis)'''
-    beat_constant_min, beat_constant_max = get_beat_distance_constants(samplerate)
+    beat_constant_min, beat_constant_max = _get_beat_distance_constants(samplerate)
     for duration_between_beats in durations_between_beats:
         if beat_constant_min <= duration_between_beats <= beat_constant_max:
             hypothesis = duration_between_beats
@@ -72,7 +72,7 @@ def find_first_hypothesis(samplerate, durations_between_beats):
 
 def compute_bpm(samplerate, beat_distances):
     '''This section finds the tempo of the piece'''
-    beatconstantmin, beatconstantmax = get_beat_distance_constants(samplerate)
+    beatconstantmin, beatconstantmax = _get_beat_distance_constants(samplerate)
     hypothesis = find_first_hypothesis(samplerate, beat_distances)
     index = beat_distances.index(hypothesis) if hypothesis else 0
     selected_distances = []
@@ -115,3 +115,9 @@ def _is_in_bounds(value, boundary):
     lower_bound = boundary * (1 - allowance_percentage)
     higher_bound = boundary * (1 + allowance_percentage)
     return lower_bound <= value <= higher_bound
+
+def _get_beat_distance_constants(samplerate):
+    '''returns min and max distances between beats (int, int)'''
+    beat_distance_min = round(samplerate / BPS_MAX)
+    beat_distance_max = round(samplerate / BPS_MIN)
+    return beat_distance_min, beat_distance_max
