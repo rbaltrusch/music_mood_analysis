@@ -1,5 +1,6 @@
 #python
 __pycache__
+.pylint.d/
 
 #music files
 *.wav
