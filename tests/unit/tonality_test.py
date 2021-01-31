@@ -89,6 +89,6 @@ def test_normalise(frequency, expected):
 @pytest.mark.slow
 @pytest.mark.usefixtures("data_g_major_scale")
 def test_analyse(samplerate, data_g_major_scale):
-    tonality_, key = tonality.analyse(samplerate, data_g_major_scale)
+    tonality_, key, _ = tonality.analyse(samplerate, data_g_major_scale)
     assert tonality_ == 'major', 'Should return G major for a G major scale'
     assert key == 'G', 'Should return key == G for a G major scale'

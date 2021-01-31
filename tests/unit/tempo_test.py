@@ -72,7 +72,7 @@ def test_compute_beat_distances(local_maximum_values, expected):
 @pytest.mark.usefixtures("random_rhythmic_data")
 def test_compute_local_maximum_values(down_samplerate, random_rhythmic_data):
     data = random_rhythmic_data
-    local_maximum_values = tempo.compute_local_maximum_values(down_samplerate, data)
+    local_maximum_values, _ = tempo.compute_local_maximum_values(down_samplerate, data)
     assert isinstance(local_maximum_values, list), 'local_maximum_values should be of type list'
 
     positive_values = [x for x in random_rhythmic_data if x > 0]
@@ -111,8 +111,13 @@ def test_compute_bpm(down_samplerate, beat_distances, expected):
 def test_analyse(down_samplerate, random_rhythmic_data):
     """This test very rarely fails, due to the random input data"""
     data = random_rhythmic_data
-    bpm = tempo.analyse(down_samplerate, data)
+    bpm, _, _ = tempo.analyse(down_samplerate, data)
     assert isinstance(bpm, int), 'Bpm should be int'
 
     lower, upper = 110, 130
     assert lower < bpm < upper, f'Expected result to be in range {lower}:{upper}, but got {bpm}'
+
+@pytest.mark.usefixtures("samplerate")
+def test_beat_distance_constants(samplerate):
+    min_distance, max_distance = tempo._get_beat_distance_constants(samplerate)
+    assert min_distance < max_distance, "Minimum distance should be smaller than maximum distance"
