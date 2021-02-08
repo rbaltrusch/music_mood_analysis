@@ -110,9 +110,9 @@ def _plot_data():
     root_index = consts.MUSICAL_NOTE_NAMES.index(app.data['key'])
     annotations = [consts.MUSICAL_NOTE_NAMES[i] for i in range(root_index - 12, root_index)]
 
-    dataset1 = figure.DataSet(y=app.data.get('normalized_note_counts'), line_colour=config.PRIM)
+    dataset1 = figure.DataSet(y=app.data.get('normalized_note_counts'), line_colour=config.SEC)
     dataset1.annotations = annotations
-    app['plot']['note_fig'].tk_component.plot(dataset1, normalized=True, annotate=True)
+    app['plot']['note_fig'].tk_component.plot(dataset1, normalized=True, annotate=True, bar=True)
 
     app['plot'].activate()
     app['plot'].pack()
