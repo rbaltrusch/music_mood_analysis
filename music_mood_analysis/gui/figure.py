@@ -13,11 +13,12 @@ matplotlib.use('TkAgg')
 
 class DataSet:
     """Dataset class to be used for plotting using figure.Figure"""
+
     def __init__(self, x=None, y=None, line_colour='#FFFFFF'):
         self.x = x
         self.y = y
         self.line_colour = line_colour
-        self.annotated = False
+        self.annotations = []
 
     def __iter__(self):
         for item in [self.x, self.y, self.line_colour]:
@@ -30,25 +31,6 @@ class DataSet:
             max_ = max(self.y)
             self.y = [point / max_ for point in self.y]
         return self
-
-    @property
-    def annotations(self):
-        """annotations getter, used for Figure.plot method with annotate=True.
-        returns annotation data for each point in the dataset in the format:
-            annotation text (str)
-            xy (tuple) - comprised of the x and y values stored in the dataset
-        """
-        x = self.x if self.x is not None else list(range(len(self.y)))
-        for annotation, x, y in zip(self._annotations, x, self.y):
-            yield annotation, (x, y)
-
-    @annotations.setter
-    def annotations(self, annotations):
-        """annotations.setter, which also sets Dataset.annotated to True.
-        Dataset.annotated is checked for in the Figure.plot method
-        """
-        self._annotations = annotations
-        self.annotated = True
 
     @property
     def x_limits(self):
@@ -67,6 +49,7 @@ class DataSet:
 
 class Figure:
     """Wrapper class around matplotlib plots for tkinter (FigureCanvasTkAgg)"""
+
     def __init__(self,  parent, bg_colour, axes_colour):
         self.parent = parent
         self.bg_colour = bg_colour
@@ -78,7 +61,7 @@ class Figure:
         rect = self.figure.patch
         rect.set_facecolor(self.bg_colour)
 
-    def plot(self, *datasets, normalized=False, annotate=False):
+    def plot(self, *datasets, normalized=False, annotate=False, bar=False):
         """Plots the passed datasets.
         If normalized=True, the datasets are normalized first.
         If annotate=True, each point in the datasets gets annotated with custom text
@@ -90,13 +73,22 @@ class Figure:
             datasets = self._normalize(datasets)
 
         for dataset in datasets:
-            self.axes.plot(*dataset)
+            self.axes.plot(*dataset) if not bar else self.axes.bar(list(range(len(dataset.y))), dataset.y, color=dataset.line_colour)
             self.axes.set_xlim(*dataset.x_limits)
-            self.axes.set_ylim(*dataset.y_limits)
 
-            if annotate and dataset.annotated:
-                for annotation, xy in dataset.annotations:
-                    self.axes.annotate(annotation, xy, color=self.axes_colour)
+            if normalized:
+                self.axes.set_yticks([x * 0.2 for x in range(7)]) #0 to 1.2
+            else:
+                self.axes.set_ylim(*dataset.y_limits)
+
+            if annotate and dataset.annotations:
+                #adjust for center alignment of bars
+                xticks = [x for x in range(-1, len(dataset.annotations) + 1)]
+                annotations = [''] + dataset.annotations + [''] 
+
+                #set number of ticks and their labels
+                self.axes.set_xticks(xticks)
+                self.axes.set_xticklabels(annotations)
 
     def grid(self, *args, **kwargs):
         """Adds the tk widget to the grid"""
