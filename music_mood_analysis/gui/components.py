@@ -13,6 +13,7 @@ import tkinter as tk
 
 class Tk(tk.Tk):
     """Extends tk.Tk as root of the app for better row, col and icon API"""
+
     def __init__(self):
         super().__init__()
         self.col_num = 0
@@ -57,6 +58,7 @@ class Gui:
     """Main gui class to hold references to all components, data and tk Vars used
     in the gui
     """
+
     def __init__(self, window):
         self.window = window
         self.views_dict = {}
@@ -94,6 +96,7 @@ class View():
     """View class to group together conceptually related tk widgets, which then
     can be collectively shown or hidden
     """
+
     def __init__(self):
         self.active = False
         self._components = {}
@@ -175,6 +178,7 @@ class Component():
     """Wrapper class around tk widgets that holds all information required
     for grid manager, which allows adding or removing widgets from grid easily
     """
+
     def __init__(self, tk_component, row=0, column=0, sticky='n', padx=0, pady=0, column_span=1, row_span=1, var=None):
         self.tk_component = tk_component
         self.row = row
@@ -223,6 +227,7 @@ class Frame(Component):
 
     Inherits all attributes and methods from Component class
     """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.col_num = 0
