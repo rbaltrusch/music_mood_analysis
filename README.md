@@ -5,7 +5,6 @@ This analysis tool extracts tempo and tonality from music using digital signal p
 The tool comes with a graphical user interface, which may be used to select the file to be analysed, configure the analysis parameters, run the analysis and finally inspect the analysis results.
 
 ![Screenshot of the analysis GUI](music_mood_analysis/gui/media/screenshot2.png?raw=true "Screenshot of the analysis GUI")
-*Screenshot of the analysis GUI*
 
 ## Real-time
 
@@ -29,7 +28,7 @@ More documentation is planned to be included in the [wiki](https://github.com/rb
 
 ## Python
 
-Written in Python 3.8.3
+Written in Python 3.8.3.
 
 ## License
 
