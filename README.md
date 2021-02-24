@@ -1,6 +1,6 @@
 # Music mood analysis
 
-This analysis tool extracts tempo and tonality from music using digital signal processing techniques.
+This analysis tool extracts tempo and tonality from music using digital signal processing techniques to analyse the mood of a piece of music.
 
 The tool comes with a graphical user interface, which may be used to select the file to be analysed, configure the analysis parameters, run the analysis and finally inspect the analysis results.
 
