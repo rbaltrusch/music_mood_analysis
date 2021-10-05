@@ -8,7 +8,7 @@ Created on Tue Jan 12 14:51:14 2021
 import plots
 from consts import MUSICAL_NOTE_FREQUENCIES, MUSICAL_NOTE_NAMES
 from consts import MUSICAL_NOTE_LOWER_BOUND
-from math_util import init_zero_list, compute_Yss, get_index_of
+from math_util import compute_Yss, get_index_of
 from util import timeit
 
 def _normalise(Yss_f, lower_bound=MUSICAL_NOTE_LOWER_BOUND, higher_bound=MUSICAL_NOTE_LOWER_BOUND * 2):
@@ -59,7 +59,7 @@ def count_musical_notes(samplerate, data):
 
 def compute_weighted_note_counts(samplerate, data):
     '''Returns note counts weighted by sum of amplitudes of those notes'''
-    weighted_note_counts = init_zero_list(12)
+    weighted_note_counts = [0] * 12
     amplitudes, frequencies = compute_Yss(samplerate, data)
     for amplitude, freq in zip(amplitudes, frequencies):
         frequency_differences = [abs(_normalise(freq) - frequency) for frequency in MUSICAL_NOTE_FREQUENCIES]

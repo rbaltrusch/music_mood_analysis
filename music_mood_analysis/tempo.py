@@ -8,7 +8,7 @@ Created on Tue Jan 12 15:07:35 2021
 import plots
 from consts import BPS_MIN, BPS_MAX, DECAY
 from consts import BEAT_DISTANCE_HYPOTHESIS_ALLOWANCE_PERCENTAGE as allowance_percentage
-from math_util import init_zero_list, smooth
+from math_util import smooth
 from util import timeit
 
 @timeit
@@ -23,7 +23,7 @@ def compute_local_maximum_values(samplerate, data):
     data = [x for x in data if x > 0]
     data = smooth(data, factor=100)
     beat_constant_min, beat_constant_max = _get_beat_distance_constants(samplerate)
-    local_maximum_values = init_zero_list(len(data))
+    local_maximum_values = [0] * len(data)
     current_local_maximum_value = 0
     local_maximum_value_counter = 0
     previous_max_i = 0

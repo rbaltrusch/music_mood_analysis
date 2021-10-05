@@ -7,10 +7,6 @@ Created on Tue Jan 12 14:54:21 2021
 
 import numpy
 
-def init_zero_list(sampleamount):
-    '''returns list of length sampleamount (int), containing zeros (int)'''
-    return [0] * sampleamount
-
 def compute_Yss(samplerate, data):
     '''construct a one-sided amplitude spectrum of Y(t)
 
