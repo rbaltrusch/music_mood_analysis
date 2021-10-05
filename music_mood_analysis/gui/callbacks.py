@@ -12,7 +12,7 @@ import scipy.io.wavfile as siw
 
 import tonality
 import tempo
-from dataconversion import downconvert_chunk
+from dataconversion import DownConverter
 import plots
 import consts
 from gui import app, config, figure
@@ -83,8 +83,9 @@ def _analyze(samplerate, data):
     chunk_size = app.data['chunksize'].get()
 
     #downconvert
-    args = [samplerate, data, conversion_ratio, chunk_size]
-    chunk_sample_rate, chunk_data = downconvert_chunk(*args, chunk_index=0)
+    down_converter = DownConverter(samplerate, conversion_ratio, chunk_size)
+    chunk_data = down_converter.downconvert_chunk(data, chunk_index=0)
+    chunk_sample_rate = math.ceil(samplerate/conversion_ratio)
 
     #run analysis
     bpm, local_maximum_values, data_ = tempo.analyse(chunk_sample_rate, chunk_data)

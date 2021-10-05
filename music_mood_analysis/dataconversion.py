@@ -5,69 +5,43 @@ Created on Tue Jan 12 14:43:43 2021
 @author: Korean_Crimson
 """
 
-import math
-from consts import CONVERSION_RATIO, CHUNK_SIZE
-from util import timeit
+from dataclasses import dataclass
+import consts
 
-@timeit
-def downconvert(samplerate, data, conversion_ratio=CONVERSION_RATIO):
-    '''downsampling algorithm, returns the downsampled samplerate and data.
+@dataclass
+class DownConverter:
+    """Downconverts data from one samplerate to a lower one"""
 
-    Inputs args:
-        samplerate: int
-        data: numpy.array
-        conversion_ratio: int
+    samplerate: int
+    conversion_ratio: int = consts.CONVERSION_RATIO
+    chunk_size: int = consts.CHUNK_SIZE
 
-    Return values:
-        downsampled_samplerate: int
-        downsampled_data: list
-    '''
-    downsampled_samplerate = math.ceil(samplerate/conversion_ratio)
-    downsampled_data = [_mono(data_point) for i, data_point in enumerate(data) if not i % conversion_ratio]
-    return downsampled_samplerate, downsampled_data
+    def downconvert(self, data: list) -> list:
+        """Returns the data downsampled by the conversion_ratio."""
+        return [self._mono(d) for d in data[::self.conversion_ratio]]
 
-@timeit
-def downconvert_chunk(samplerate, data, conversion_ratio=CONVERSION_RATIO, chunk_size=CHUNK_SIZE, chunk_index=0):
-    '''downsampling algorithm, returns the downsampled samplerate and data for
-    a specified data chunk.
-    This is useful to analyse data in a data stream (real-time) rather than all at once.
+    def downconvert_chunk(self, data: list, chunk_index=0) -> list:
+        """Returns the downsampled samplerate and data for a specified data chunk.
+        This is useful to analyse data in a data stream rather than all at once.
 
-    Inputs args:
-        samplerate: int
-        data: numpy.array
-        conversion_ratio: int
-        chunk_size: double (amount of data, specified in seconds)
-        chunk_index: int (specifies extracted chunk of data, starts at 0)
+        chunk_index specifies extracted chunk of data, starting at 0.
+        """
+        data_chunk = self._extract_data_chunk(data, chunk_index)
+        return self.downconvert(data_chunk)
 
-    Return values:
-        downsampled_samplerate: int
-        downsampled_data: numpy.array
+    def _extract_data_chunk(self, data, chunk_index):
+        index = self.chunk_length * chunk_index
+        return data[index : index + self.chunk_length]
 
-    Example: _extract_data_chunk(samplerate, data, 1, 0) #returns the first second of data
-    '''
-    data_chunk = _extract_data_chunk(samplerate, data, chunk_size, chunk_index)
-    return downconvert(samplerate, data_chunk, conversion_ratio)
+    @staticmethod
+    def _mono(stereo_data_point):
+        """Converts one stereo data point to one mono data point"""
+        try:
+            return int(sum(stereo_data_point))
+        except TypeError: #not iterable
+            return int(stereo_data_point)
 
-def _extract_data_chunk(samplerate, data, chunk_size, chunk_index):
-    chunk_length = round(chunk_size * samplerate)
-    if chunk_length < 0:
-        chunk_length = 0
-
-    index = chunk_length * chunk_index
-    data_chunk = data[index:index + chunk_length]
-    return data_chunk
-
-def _mono(stereo_data_point):
-    '''Converts one stereo data point to one mono data point'''
-    #figure out if stereo_data_point is iterable or not
-    try:
-        iter(stereo_data_point)
-        is_iterable = True
-    except TypeError:
-        is_iterable = False
-
-    if is_iterable:
-        mono_data_point = int(sum(stereo_data_point))
-    else:
-        mono_data_point = int(stereo_data_point)
-    return mono_data_point
+    @property
+    def chunk_length(self) -> int:
+        """Getter for chunk_length, returns chunk_size times samplerate or 0 if negative"""
+        return max(round(self.chunk_size * self.samplerate), 0)
