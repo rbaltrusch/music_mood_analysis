@@ -6,21 +6,9 @@ Created on Tue Jan 12 14:51:14 2021
 """
 
 import plots
-from consts import MUSICAL_NOTE_FREQUENCIES, MUSICAL_NOTE_NAMES
-from consts import MUSICAL_NOTE_LOWER_BOUND
-from math_util import compute_Yss, get_index_of
-from util import timeit
+from consts import MUSICAL_NOTE_FREQUENCIES, MUSICAL_NOTE_NAMES, MUSICAL_NOTE_LOWER_BOUND
+from math_util import compute_Yss, get_index_of, normalise
 
-def _normalise(Yss_f, lower_bound=MUSICAL_NOTE_LOWER_BOUND, higher_bound=MUSICAL_NOTE_LOWER_BOUND * 2):
-    if Yss_f <= 0:
-        return 0
-
-    higher_bound = lower_bound * 2 if higher_bound / 2 < lower_bound else higher_bound
-    while not lower_bound <= Yss_f <= higher_bound:
-        Yss_f *= 2 if Yss_f < lower_bound else 0.5
-    return Yss_f
-
-@timeit
 def analyse(samplerate, data):
     '''
     Tonality analysis using weighted note occurence.
@@ -62,7 +50,11 @@ def compute_weighted_note_counts(samplerate, data):
     weighted_note_counts = [0] * 12
     amplitudes, frequencies = compute_Yss(samplerate, data)
     for amplitude, freq in zip(amplitudes, frequencies):
-        frequency_differences = [abs(_normalise(freq) - frequency) for frequency in MUSICAL_NOTE_FREQUENCIES]
+        normalised_frequency = normalise(freq,
+                                         lower_bound=MUSICAL_NOTE_LOWER_BOUND,
+                                         higher_bound=MUSICAL_NOTE_LOWER_BOUND * 2
+                                         )
+        frequency_differences = [abs(normalised_frequency - f) for f in MUSICAL_NOTE_FREQUENCIES]
         min_index = get_index_of(min, frequency_differences)
         weighted_note_counts[min_index] += abs(amplitude)
     return weighted_note_counts
