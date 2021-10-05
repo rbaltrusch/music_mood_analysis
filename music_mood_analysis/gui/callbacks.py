@@ -106,7 +106,7 @@ def _plot_data():
     dataset2 = figure.DataSet(y=app.data.get('transformed_data'), line_colour=config.SEC)
     app['plot']['lmv_fig'].tk_component.plot(dataset1, dataset2, normalized=True)
 
-    #get dataset1 annotations from noramlized note names
+    #get dataset1 annotations from normalized note names
     root_index = consts.MUSICAL_NOTE_NAMES.index(app.data['key'])
     annotations = [consts.MUSICAL_NOTE_NAMES[i] for i in range(root_index - 12, root_index)]
 
