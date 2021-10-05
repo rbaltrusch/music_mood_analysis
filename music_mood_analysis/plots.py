@@ -21,17 +21,19 @@ def plot(*datasets, normalised=False, xlabel='x', ylabel='y', title='Plot'):
     Return values:
         None
     '''
-    if PLOTTING_ENABLED:
-        plt.figure()
-        _, subplot = plt.subplots(1)
-        for data in datasets:
-            if normalised:
-                data = _normalise(data)
-            subplot.plot(data)
-        plt.ylabel(ylabel)
-        plt.xlabel(xlabel)
-        plt.title(title)
-        plt.show()
+    if not PLOTTING_ENABLED:
+        return
+
+    plt.figure()
+    _, subplot = plt.subplots(1)
+    for data in datasets:
+        if normalised:
+            data = _normalise(data)
+        subplot.plot(data)
+    plt.ylabel(ylabel)
+    plt.xlabel(xlabel)
+    plt.title(title)
+    plt.show()
 
 def _normalise(data):
     max_val = max(data)
