@@ -37,5 +37,4 @@ def plot(*datasets, normalised=False, xlabel='x', ylabel='y', title='Plot'):
 
 def _normalise(data):
     max_val = max(data)
-    data = [val / max_val for val in data]
-    return data
+    return (val / max_val for val in data)
