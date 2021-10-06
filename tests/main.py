@@ -21,6 +21,7 @@ def main(open_in_browser=True, keep=False, include_slow=True, include_unreliable
     """
     package_path = os.path.join('..', PACKAGE_NAME)
     sys.path.append(package_path)
+    sys.path.append('..')
 
     timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
     report_filename = f'{timestamp}_report.html'
@@ -29,7 +30,7 @@ def main(open_in_browser=True, keep=False, include_slow=True, include_unreliable
     command_line_args = [f'--html={report_filepath}',
                          '--self-contained-html',
                          f'--cov={package_path}',
-                         f'--cov-report=html']
+                         '--cov-report=html']
 
     if not include_slow:
         command_line_args.append('-m not slow')
@@ -42,7 +43,7 @@ def main(open_in_browser=True, keep=False, include_slow=True, include_unreliable
 
     if open_in_browser:
         subprocess.call(f'start {report_filepath}', shell=True) #open test report
-        subprocess.call(f'start htmlcov/index.html', shell=True) #open coverage report
+        subprocess.call('start htmlcov/index.html', shell=True) #open coverage report
 
     if not keep:
         #wait 1 second until test report is open, then delete it
