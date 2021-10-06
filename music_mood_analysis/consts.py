@@ -6,12 +6,12 @@ Created on Tue Jan 12 14:47:09 2021
 """
 
 SAMPLE_RATE = 44100
-
 CONVERSION_RATIO = 32
 CHUNK_SIZE = 5
 
 BPS_MAX = 3 #how many beats per second we detect at most
 BPS_MIN = 1.5 #how many beats per second we detect at least
+DECAY = 0.0001 #Amplitude decay of current max val between beat_distance_min and beat_distance_max
 
 #12 frequencies starting from middle A440, up a semitone each.
 MUSICAL_NOTES = {'A': 440,
@@ -33,6 +33,3 @@ MUSICAL_NOTE_LOWER_BOUND = MUSICAL_NOTES['A']
 BEAT_DISTANCE_HYPOTHESIS_ALLOWANCE_PERCENTAGE = 0.1
 
 PLOTTING_ENABLED = True
-
-#Amplitude decay of current max val between beat_distance_min and beat_distance_max
-DECAY = 0.0001
