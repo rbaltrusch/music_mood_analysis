@@ -83,19 +83,19 @@ def _analyze(samplerate, data):
     chunk_sample_rate = math.ceil(samplerate/conversion_ratio)
 
     #run tempo analysis
-    tempo_analyzer = tempo.TempoAnalyzer(chunk_sample_rate)
-    tempo_analyzer.BPS_MIN = app.data['bps_min'].get()
-    tempo_analyzer.BPS_MAX = app.data['bps_max'].get()
-    tempo_analyzer.DECAY = app.data['decay'].get()
-    bpm = tempo_analyzer.analyse(chunk_data)
+    tempo_analyser = tempo.TempoAnalyser(chunk_sample_rate)
+    tempo_analyser.BPS_MIN = app.data['bps_min'].get()
+    tempo_analyser.BPS_MAX = app.data['bps_max'].get()
+    tempo_analyser.DECAY = app.data['decay'].get()
+    bpm = tempo_analyser.analyse(chunk_data)
 
     #run tonality analysis
     tonality_, key, normalized_note_counts = tonality.analyse(chunk_sample_rate, chunk_data)
 
     #set data for plots
-    app.data['local_maximum_values'] = tempo_analyzer.local_maximum_data
+    app.data['local_maximum_values'] = tempo_analyser.local_maximum_data
     app.data['normalized_note_counts'] = normalized_note_counts
-    app.data['transformed_data'] = tempo_analyzer.processed_data
+    app.data['transformed_data'] = tempo_analyser.processed_data
     app.data['key'] = key
 
     #set tk StringVars

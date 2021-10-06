@@ -24,7 +24,7 @@ class DataPoint:
 
 #pylint: disable=too-many-instance-attributes
 @dataclass
-class TempoAnalyzer:
+class TempoAnalyser:
     """Analyses tempo of data by determining distance between local amplitude maxima"""
 
     samplerate: int
@@ -88,14 +88,14 @@ class TempoAnalyzer:
         return round(self.samplerate / self.BPS_MIN)
 
 #pylint: disable=too-few-public-methods
-class FFTTempoAnalyzer:
+class FFTTempoAnalyser:
     """Analyses tempo of data using spectral analysis (fft)"""
 
     samplerate: float
     BPS_MIN: float = consts.BPS_MIN
     BPS_MAX: float = consts.BPS_MAX
 
-    def analyze(self, data: numpy.array) -> int:
+    def analyse(self, data: numpy.array) -> int:
         """Analyses the input data and returns the computed bpm"""
         Yss, Yss_f = compute_Yss(self.samplerate, data)
         freq_dict = collections.defaultdict(int)
