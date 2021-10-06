@@ -8,7 +8,7 @@ Created on Fri Jan 15 12:47:23 2021
 import math
 import pytest
 import numpy
-from music_mood_analysis import dataconversion
+from music_mood_analysis.dataconversion import DownConverter
 
 @pytest.mark.parametrize('point', [
         numpy.int16(2),
@@ -18,7 +18,7 @@ from music_mood_analysis import dataconversion
         numpy.array([1, 2])
         ])
 def test_stereo_to_mono(point):
-    result = dataconversion._mono(point)
+    result = DownConverter._mono(point)
     assert isinstance(result, int), 'dataconversion._mono should return an int'
 
 
@@ -29,7 +29,8 @@ def test_extract_data_chunk(down_samplerate, random_data, chunk_size):
     samplerate = down_samplerate #fixture should be 1379
     chunk_index = 0
 
-    data_chunk = dataconversion._extract_data_chunk(samplerate, data, chunk_size, chunk_index)
+    data_converter = DownConverter(samplerate, chunk_size=chunk_size)
+    data_chunk = data_converter._extract_data_chunk(data, chunk_index)
 
     expected_length = round(samplerate * chunk_size) if chunk_size > 0 else 0
     if expected_length > len(data):
@@ -52,19 +53,13 @@ def test_downconvert_chunk(samplerate, long_random_data, conversion_ratio, chunk
     data = long_random_data #fixture should be of length 60000
     chunk_index = 0
 
-    args = [samplerate, data, conversion_ratio, chunk_size, chunk_index]
-    downsampled_samplerate, downsampled_data = dataconversion.downconvert_chunk(*args)
+    data_converter = DownConverter(samplerate, conversion_ratio, chunk_size)
+    downsampled_data = data_converter.downconvert_chunk(data, chunk_index)
 
     assert isinstance(downsampled_data, list), 'Downsampled data should be of type list'
-    assert isinstance(downsampled_samplerate, int), 'Downsampled samplerate should be of type int'
 
-    expected_down_samplerate = math.ceil(samplerate / conversion_ratio)
-    message = f'Expected downsampled_samplerate = {expected_down_samplerate}, got {downsampled_samplerate}'
-    assert downsampled_samplerate == expected_down_samplerate, message
-
-    expected_length = math.ceil(expected_down_samplerate * chunk_size)
-    if expected_length < 0:
-        expected_length = 0
+    samplerate = math.ceil(samplerate / conversion_ratio)
+    expected_length = max(math.ceil(samplerate * chunk_size), 0)
     if expected_length > len(data):
         expected_length = math.ceil(len(data) / conversion_ratio)
 

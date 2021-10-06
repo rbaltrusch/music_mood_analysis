@@ -9,17 +9,6 @@ import pytest
 import numpy
 from music_mood_analysis import math_util
 
-@pytest.mark.parametrize('sampleamount', [-1, 0, 1, 10, 1000])
-def test_init_zero_list(sampleamount):
-    result = math_util.init_zero_list(sampleamount)
-
-    expected_length = sampleamount if sampleamount > 0 else 0
-    message = f'init_zero_list should return a list of length {expected_length}'
-    assert len(result) == expected_length, message
-
-    all_zeros = all(x == 0 for x in result)
-    assert all_zeros, 'init_zero_list should return a list filled with zeros'
-
 @pytest.mark.xfail()
 @pytest.mark.parametrize('sampleamount', [[], 'test', {'a': 2}, {'b'}])
 def test_init_zero_list_bad_args(sampleamount):
@@ -80,3 +69,16 @@ def test_get_index_of(func, data, expected):
         ])
 def test_get_index_of_bad_args(func, data):
     math_util.get_index_of(func, data)
+
+@pytest.mark.parametrize("frequency,expected", [
+        (-1, 0),
+        (0, 0),
+        (220, 440),
+        (440, 440),
+        (880, 880),
+        (1000, 500)
+        ])
+def test_normalise(frequency, expected):
+    normalised_frequency = math_util.normalise(frequency, lower_bound=440, higher_bound=880)
+    assert isinstance(normalised_frequency, (int, float)), 'tonality._normalise should return an int or float'
+    assert normalised_frequency == expected, f'Expected {expected}, but got {normalised_frequency}'
