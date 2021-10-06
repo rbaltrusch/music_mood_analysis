@@ -74,8 +74,9 @@ class TempoAnalyser:
         if not filtered_dists:
             return 0
 
-        average_dist = sum(filtered_dists) / len(filtered_dists)
-        return round((60 * self.samplerate) / average_dist)
+        middle_index = len(filtered_dists) // 2
+        median_dist = sorted(filtered_dists)[middle_index]
+        return round((60 * self.samplerate) / median_dist)
 
     @property
     def beat_min_dist(self) -> float:
