@@ -5,119 +5,103 @@ Created on Tue Jan 12 15:07:35 2021
 @author: Korean_Crimson
 """
 
-import plots
-from consts import BPS_MIN, BPS_MAX, DECAY
-from consts import BEAT_DISTANCE_HYPOTHESIS_ALLOWANCE_PERCENTAGE as allowance_percentage
-from math_util import smooth
-from util import timeit
+import collections
+from dataclasses import dataclass
 
-@timeit
-def analyse(samplerate, data):
-    local_maximum_values, data_ = compute_local_maximum_values(samplerate, data)
-    beat_distances = compute_beat_distances(local_maximum_values)
-    bpm = compute_bpm(samplerate, beat_distances)
-    return bpm, local_maximum_values, data_
+import numpy
 
-def compute_local_maximum_values(samplerate, data):
-    '''Beat detection algorithm '''
-    data = [x for x in data if x > 0]
-    data = smooth(data, factor=100)
-    beat_constant_min, beat_constant_max = _get_beat_distance_constants(samplerate)
-    local_maximum_values = [0] * len(data)
-    current_local_maximum_value = 0
-    local_maximum_value_counter = 0
-    previous_max_i = 0
-    for i, data_point in enumerate(data):
-        remove_previous_max_flag = False
-        if data_point >= current_local_maximum_value:
-            if local_maximum_value_counter < beat_constant_min:
-                remove_previous_max_flag = True
-            set_max_flag = True
-        elif local_maximum_value_counter > beat_constant_max:
-            set_max_flag = True
-        else:
-            set_max_flag = False
-            local_maximum_value_counter += 1
+import consts
+from math_util import smooth, normalise, compute_Yss
 
-        if set_max_flag:
-            if remove_previous_max_flag:
-                local_maximum_values[previous_max_i] = 0
-            previous_max_i = i
-            local_maximum_value_counter = 0
-            local_maximum_values[i] = data_point
-            current_local_maximum_value = data_point
+#pylint: disable=invalid-name
 
-        if local_maximum_value_counter < beat_constant_min:
-            current_local_maximum_value *= (1 - DECAY)
+@dataclass
+class DataPoint:
+    """Stores index, value and decayed_value attributes for local maximum value algorithm"""
+    index: int
+    value: float
+    decayed_value: float
 
-    plots.plot(data, local_maximum_values, ylabel='Local maximum values', normalised=True)
-    return local_maximum_values, data
+#pylint: disable=too-many-instance-attributes
+@dataclass
+class TempoAnalyzer:
+    """Analyses tempo of data by determining distance between local amplitude maxima"""
 
-def compute_beat_distances(local_maximum_values):
-    indices = [i for i, x in enumerate(local_maximum_values) if x > 0] #non zero indices
-    beat_distances = [indices[i + 1] - indices[i] for i in range(len(indices) - 1)]
-    plots.plot(beat_distances, ylabel='duration between beats')
-    return beat_distances
+    samplerate: int
+    local_maximum_data: list = None #zero-stuffed, same length as processed data
+    _local_maximum_values: list = None #list of index, value tuples
+    processed_data: list = None
+    BPS_MIN: float = consts.BPS_MIN
+    BPS_MAX: float = consts.BPS_MAX
+    DECAY: float = consts.DECAY
 
-def find_first_hypothesis(samplerate, durations_between_beats):
-    '''This formulates our first dbb (duration between beats hypothesis)'''
-    beat_constant_min, beat_constant_max = _get_beat_distance_constants(samplerate)
-    for duration_between_beats in durations_between_beats:
-        if beat_constant_min <= duration_between_beats <= beat_constant_max:
-            hypothesis = duration_between_beats
-            break
-    else:
-        hypothesis = 0
-    return hypothesis
+    def analyse(self, data: list) -> int:
+        """Analyses the input data and returns the computed bpm"""
+        self._process_data(data)
+        self._compute_local_maximum_values()
+        self._set_local_maximum_data()
+        return self._compute_bpm()
 
-def compute_bpm(samplerate, beat_distances):
-    '''This section finds the tempo of the piece'''
-    beatconstantmin, beatconstantmax = _get_beat_distance_constants(samplerate)
-    hypothesis = find_first_hypothesis(samplerate, beat_distances)
-    index = beat_distances.index(hypothesis) if hypothesis else 0
-    selected_distances = []
-    flagged_values = [] #beat distances that didnt agree with current hypothesis
-    flag = ''
-    for beat_distance in beat_distances[index:]:
-        if flag == 'next':
-            hypothesis = beat_distance
-            flag = ''
+    def _process_data(self, data):
+        non_zero_data = [x for x in data if x > 0]
+        self.processed_data = smooth(non_zero_data, factor=100)
 
-        if beatconstantmin <= hypothesis <= beatconstantmax and _is_in_bounds(beat_distance, hypothesis):
-            flagged_values = []
-            selected_distances.append(beat_distance)
-            hypothesis = sum(selected_distances) / len(selected_distances)
-        else:
-            flagged_values.append(beat_distance)
+    def _compute_local_maximum_values(self):
+        """Beat detection algorithm"""
+        self._local_maximum_values = [DataPoint(0, 0, 0)]
+        for i, x in enumerate(self.processed_data):
+            under_min = i - self._local_maximum_values[-1].index < self.beat_min_dist
+            over_max = i - self._local_maximum_values[-1].index > self.beat_max_dist
+            if x >= self._local_maximum_values[-1].decayed_value or over_max:
+                if under_min:
+                    self._local_maximum_values.pop()
+                self._local_maximum_values.append(DataPoint(i, x, x))
+            self._local_maximum_values[-1].decayed_value *= (1 - consts.DECAY)
 
-        #current hypothesis stays if less than two flagged values
-        if len(flagged_values) == 2:
-            if _are_closely_matching(flagged_values):
-                hypothesis = sum(flagged_values) / 2
-                selected_distances, flagged_values = [hypothesis], []
-            else:
-                flag = 'next'
-                selected_distances, flagged_values = [], []
+    def _compute_beat_distances(self):
+        indices = [data_point.index for data_point in self._local_maximum_values]
+        return [indices[i + 1] - indices[i] for i in range(len(indices) - 1)]
 
-    selected_distances = selected_distances if selected_distances else [hypothesis]
-    if selected_distances:
-        avg_beat_distance = sum(selected_distances) / len(selected_distances)
-        bpm = (samplerate / avg_beat_distance) * 60 if avg_beat_distance else 0
-    return round(bpm)
+    def _set_local_maximum_data(self):
+        self.local_maximum_data = [0] * len(self.processed_data)
+        for data_point in self._local_maximum_values:
+            self.local_maximum_data[data_point.index] = data_point.value
 
-def _are_closely_matching(values):
-    a, b = values
-    result = abs(a - b)/ (a + b) <= allowance_percentage if a + b else False
-    return result
+    def _compute_bpm(self) -> int:
+        """This section finds the tempo of the piece"""
+        beat_dists = self._compute_beat_distances()
+        filtered_dists = [d for d in beat_dists if self.beat_min_dist <= d <= self.beat_max_dist]
+        if not filtered_dists:
+            return 0
 
-def _is_in_bounds(value, boundary):
-    """Only works for positive values"""
-    lower_bound = boundary * (1 - allowance_percentage)
-    higher_bound = boundary * (1 + allowance_percentage)
-    return lower_bound <= value <= higher_bound
+        average_dist = sum(filtered_dists) / len(filtered_dists)
+        return (60 * self.samplerate) // average_dist
 
-def _get_beat_distance_constants(samplerate):
-    '''returns min and max distances between beats (int, int)'''
-    beat_distance_min = round(samplerate / BPS_MAX)
-    beat_distance_max = round(samplerate / BPS_MIN)
-    return beat_distance_min, beat_distance_max
+    @property
+    def beat_min_dist(self) -> float:
+        """Beat constant min getter, minimum distance between beats"""
+        return round(self.samplerate / self.BPS_MAX)
+
+    @property
+    def beat_max_dist(self) -> float:
+        """Beat constant max getter, maximum distance between beats"""
+        return round(self.samplerate / self.BPS_MIN)
+
+#pylint: disable=too-few-public-methods
+class FFTTempoAnalyzer:
+    """Analyses tempo of data using spectral analysis (fft)"""
+
+    samplerate: float
+    BPS_MIN: float = consts.BPS_MIN
+    BPS_MAX: float = consts.BPS_MAX
+
+    def analyze(self, data: numpy.array) -> int:
+        """Analyses the input data and returns the computed bpm"""
+        Yss, Yss_f = compute_Yss(self.samplerate, data)
+        freq_dict = collections.defaultdict(int)
+        for amplitude, freq in zip(map(abs, Yss), Yss_f):
+            normalised_freq = normalise(freq, lower_bound=self.BPS_MIN, higher_bound=self.BPS_MAX)
+            rounded_freq = round(normalised_freq, 2)
+            freq_dict[rounded_freq] += abs(amplitude)
+        bpm = round(60 * max(freq_dict.items(), key=lambda x: x[1])[0])
+        return bpm

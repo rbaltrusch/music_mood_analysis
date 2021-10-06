@@ -23,7 +23,6 @@ def set_gui_config_defaults(*_):
     app.data['conversion_ratio'].set(consts.CONVERSION_RATIO)
     app.data['bps_min'].set(consts.BPS_MIN)
     app.data['bps_max'].set(consts.BPS_MAX)
-    app.data['allowance'].set(consts.BEAT_DISTANCE_HYPOTHESIS_ALLOWANCE_PERCENTAGE)
     app.data['decay'].set(consts.DECAY)
 
 def set_scale(*_):
@@ -72,10 +71,6 @@ def analyze():
 
 def _set_analysis_constants():
     plots.PLOTTING_ENABLED = False #disable plots inside analysis
-    tempo.BPS_MIN = app.data['bps_min'].get()
-    tempo.BPS_MAX = app.data['bps_max'].get()
-    tempo.BEAT_DISTANCE_HYPOTHESIS_ALLOWANCE_PERCENTAGE = app.data['allowance'].get()
-    tempo.DECAY = app.data['decay'].get()
 
 def _analyze(samplerate, data):
     #get data from gui
@@ -87,14 +82,20 @@ def _analyze(samplerate, data):
     chunk_data = down_converter.downconvert_chunk(data, chunk_index=0)
     chunk_sample_rate = math.ceil(samplerate/conversion_ratio)
 
-    #run analysis
-    bpm, local_maximum_values, data_ = tempo.analyse(chunk_sample_rate, chunk_data)
+    #run tempo analysis
+    tempo_analyzer = tempo.TempoAnalyzer(chunk_sample_rate)
+    tempo_analyzer.BPS_MIN = app.data['bps_min'].get()
+    tempo_analyzer.BPS_MAX = app.data['bps_max'].get()
+    tempo_analyzer.DECAY = app.data['decay'].get()
+    bpm = tempo_analyzer.analyse(chunk_data)
+
+    #run tonality analysis
     tonality_, key, normalized_note_counts = tonality.analyse(chunk_sample_rate, chunk_data)
 
     #set data for plots
-    app.data['local_maximum_values'] = local_maximum_values
+    app.data['local_maximum_values'] = tempo_analyzer.local_maximum_data
     app.data['normalized_note_counts'] = normalized_note_counts
-    app.data['transformed_data'] = data_
+    app.data['transformed_data'] = tempo_analyzer.processed_data
     app.data['key'] = key
 
     #set tk StringVars
