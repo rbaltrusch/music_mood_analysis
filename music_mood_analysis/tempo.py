@@ -75,7 +75,7 @@ class TempoAnalyser:
             return 0
 
         average_dist = sum(filtered_dists) / len(filtered_dists)
-        return (60 * self.samplerate) // average_dist
+        return round((60 * self.samplerate) / average_dist)
 
     @property
     def beat_min_dist(self) -> float:
