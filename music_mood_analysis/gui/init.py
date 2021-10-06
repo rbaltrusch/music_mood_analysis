@@ -131,15 +131,6 @@ def init_config_view():
     component = components.Component(decay_scale, sticky='NSEW', row=4, column=1)
     view.add_component(component, 'decay_scale')
 
-    #BEAT_DISTANCE_HYPOTHESIS_ALLOWANCE_PERCENTAGE
-    allowance_label = tk.Label(frame, text='Bpm hypothesis allowance percentage', **config.LABEL_THEME)
-    component = components.Component(allowance_label, sticky='NSE', row=5, column=0, padx=5)
-    view.add_component(component, 'allowance_label')
-
-    allowance_scale = tk.Scale(frame, from_=0, to=1, orient='horizontal', digits=2, resolution=0.1, variable=app.data['allowance'], bd=0, **config.SCALE_THEME)
-    component = components.Component(allowance_scale, sticky='NSEW', row=5, column=1)
-    view.add_component(component, 'allowance_scale')
-
     #reset defaults button
     reset_button = tk.Button(frame, text='Reset', command=callbacks.set_gui_config_defaults, **config.BUTTON_THEME)
     component = components.Component(reset_button, sticky='NSEW', row=0, row_span=2, column=2)
@@ -147,7 +138,7 @@ def init_config_view():
 
     #run button
     run_button = tk.Button(frame, text='Run', command=callbacks.analyze, **config.BUTTON_THEME)
-    component = components.Component(run_button, sticky='NSEW', row=3, row_span=3, column=2)
+    component = components.Component(run_button, sticky='NSEW', row=2, row_span=3, column=2)
     view.add_component(component, 'run_button')
 
     return view
