@@ -26,8 +26,8 @@ MUSICAL_NOTES = {'A': 440,
                  'F#': 739.99,
                  'G': 783.99,
                  'G#': 830.61}
-MUSICAL_NOTE_FREQUENCIES = list(MUSICAL_NOTES.values())
-MUSICAL_NOTE_NAMES = list(MUSICAL_NOTES.keys())
+MUSICAL_NOTE_FREQUENCIES = tuple(MUSICAL_NOTES.values())
+MUSICAL_NOTE_NAMES = tuple(MUSICAL_NOTES.keys())
 MUSICAL_NOTE_LOWER_BOUND = MUSICAL_NOTES['A']
 
 PLOTTING_ENABLED = True

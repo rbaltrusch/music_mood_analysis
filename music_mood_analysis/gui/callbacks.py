@@ -90,18 +90,19 @@ def _analyze(samplerate, data):
     bpm = tempo_analyser.analyse(chunk_data)
 
     #run tonality analysis
-    tonality_, key, normalized_note_counts = tonality.analyse(chunk_sample_rate, chunk_data)
+    tonality_analyser = tonality.TonalityAnalyser(chunk_sample_rate)
+    tonality_ = tonality_analyser.analyse(chunk_data)
 
     #set data for plots
     app.data['local_maximum_values'] = tempo_analyser.local_maximum_data
-    app.data['normalized_note_counts'] = normalized_note_counts
+    app.data['normalised_note_counts'] = tonality_analyser.normalised_note_counts
     app.data['transformed_data'] = tempo_analyser.processed_data
-    app.data['key'] = key
+    app.data['key'] = tonality_.split(' ')[0]
 
     #set tk StringVars
     app.data['chunk_samplerate'].set(chunk_sample_rate)
     app.data['bpm'].set(bpm)
-    app.data['tonality'].set(f'{key} {tonality_}')
+    app.data['tonality'].set(tonality_)
 
 def _plot_data():
     dataset1 = figure.DataSet(y=app.data.get('local_maximum_values'), line_colour=config.PRIM)
@@ -112,7 +113,7 @@ def _plot_data():
     root_index = consts.MUSICAL_NOTE_NAMES.index(app.data['key'])
     annotations = [consts.MUSICAL_NOTE_NAMES[i] for i in range(root_index - 12, root_index)]
 
-    dataset1 = figure.DataSet(y=app.data.get('normalized_note_counts'), line_colour=config.SEC)
+    dataset1 = figure.DataSet(y=app.data.get('normalised_note_counts'), line_colour=config.SEC)
     dataset1.annotations = annotations
     app['plot']['note_fig'].tk_component.plot(dataset1, normalized=True, annotate=True, bar=True)
 
