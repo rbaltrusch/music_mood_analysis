@@ -61,19 +61,16 @@ def analyze():
         app.data['error'].set(True)
         return
 
-    #get gui data
+    plots.PLOTTING_ENABLED = False #disable plots during analysis
+    chunk_data, chunk_sample_rate = _downconvert()
+    tempo_analyser = _analyse_tempo(chunk_data, chunk_sample_rate)
+    tonality_analyser = _analyse_tonality(chunk_data, chunk_sample_rate)
+    _plot_data(tempo_analyser, tonality_analyser)
+
+def _downconvert():
+    #get data from gui
     samplerate = int(app.data.get('samplerate').get())
     data = app.data.get('data')
-
-    _set_analysis_constants()
-    _analyze(samplerate, data)
-    _plot_data()
-
-def _set_analysis_constants():
-    plots.PLOTTING_ENABLED = False #disable plots inside analysis
-
-def _analyze(samplerate, data):
-    #get data from gui
     conversion_ratio = app.data['conversion_ratio'].get()
     chunk_size = app.data['chunksize'].get()
 
@@ -81,39 +78,33 @@ def _analyze(samplerate, data):
     down_converter = DownConverter(samplerate, conversion_ratio, chunk_size)
     chunk_data = down_converter.downconvert_chunk(data, chunk_index=0)
     chunk_sample_rate = math.ceil(samplerate/conversion_ratio)
+    return chunk_data, chunk_sample_rate
 
-    #run tempo analysis
+def _analyse_tempo(chunk_data, chunk_sample_rate):
     tempo_analyser = tempo.TempoAnalyser(chunk_sample_rate)
     tempo_analyser.BPS_MIN = app.data['bps_min'].get()
     tempo_analyser.BPS_MAX = app.data['bps_max'].get()
     tempo_analyser.DECAY = app.data['decay'].get()
     bpm = tempo_analyser.analyse(chunk_data)
+    app.data['bpm'].set(bpm)
+    return tempo_analyser
 
-    #run tonality analysis
+def _analyse_tonality(chunk_data, chunk_sample_rate):
     tonality_analyser = tonality.TonalityAnalyser(chunk_sample_rate)
     tonality_ = tonality_analyser.analyse(chunk_data)
-
-    #set data for plots
-    app.data['local_maximum_values'] = tempo_analyser.local_maximum_data
-    app.data['normalised_note_counts'] = tonality_analyser.normalised_note_counts
-    app.data['transformed_data'] = tempo_analyser.processed_data
-    app.data['key'] = tonality_.split(' ')[0]
-
-    #set tk StringVars
-    app.data['chunk_samplerate'].set(chunk_sample_rate)
-    app.data['bpm'].set(bpm)
     app.data['tonality'].set(tonality_)
+    return tonality_analyser
 
-def _plot_data():
-    dataset1 = figure.DataSet(y=app.data.get('local_maximum_values'), line_colour=config.PRIM)
-    dataset2 = figure.DataSet(y=app.data.get('transformed_data'), line_colour=config.SEC)
+def _plot_data(tempo_analyser, tonality_analyser):
+    dataset1 = figure.DataSet(y=tempo_analyser.local_maximum_data, line_colour=config.PRIM)
+    dataset2 = figure.DataSet(y=tempo_analyser.processed_data, line_colour=config.SEC)
     app['plot']['lmv_fig'].tk_component.plot(dataset1, dataset2, normalized=True)
 
     #get dataset1 annotations from normalized note names
-    root_index = consts.MUSICAL_NOTE_NAMES.index(app.data['key'])
+    root_index = tonality_analyser.musical_root_index
     annotations = [consts.MUSICAL_NOTE_NAMES[i] for i in range(root_index - 12, root_index)]
 
-    dataset1 = figure.DataSet(y=app.data.get('normalised_note_counts'), line_colour=config.SEC)
+    dataset1 = figure.DataSet(y=tonality_analyser.normalised_note_counts, line_colour=config.SEC)
     dataset1.annotations = annotations
     app['plot']['note_fig'].tk_component.plot(dataset1, normalized=True, annotate=True, bar=True)
 

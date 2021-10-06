@@ -13,7 +13,6 @@ root = Tk()
 app = Gui(root)
 
 #tk variable declarations
-app.data['chunk_samplerate'] = tk.StringVar()
 app.data['bpm'] = tk.StringVar()
 app.data['tonality'] = tk.StringVar()
 app.data['audio_filename'] = tk.StringVar()
