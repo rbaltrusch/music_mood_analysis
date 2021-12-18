@@ -4,11 +4,11 @@ Created on Sat Jan 30 14:41:51 2021
 
 @author: Korean_Crimson
 """
-
 #pylint: disable=invalid-name
-
-from typing import Iterable, Optional
-from dataclasses import dataclass, field
+from dataclasses import dataclass
+from dataclasses import field
+from typing import Iterable
+from typing import Optional
 
 import matplotlib
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -64,6 +64,7 @@ class Figure:
         rect = self.figure.patch
         rect.set_facecolor(self.bg_colour)
 
+    #pylint: disable=disallowed-name #bar
     def plot(self, *datasets, normalized=False, annotate=False, bar=False):
         """Plots the passed datasets.
         If normalized=True, the datasets are normalized first.
@@ -76,7 +77,11 @@ class Figure:
             datasets = self._normalize(datasets)
 
         for dataset in datasets:
-            self.axes.plot(*dataset) if not bar else self.axes.bar(list(range(len(dataset.y))), dataset.y, color=dataset.line_colour)
+            if bar:
+                self.axes.bar(list(range(len(dataset.y))), dataset.y, color=dataset.line_colour)
+            else:
+                self.axes.plot(*dataset)
+
             self.axes.set_xlim(*dataset.x_limits)
 
             if normalized:
@@ -86,8 +91,8 @@ class Figure:
 
             if annotate and dataset.annotations:
                 #adjust for center alignment of bars
-                xticks = [x for x in range(-1, len(dataset.annotations) + 1)]
-                annotations = [''] + dataset.annotations + [''] 
+                xticks = list(range(-1, len(dataset.annotations) + 1))
+                annotations = [''] + dataset.annotations + ['']
 
                 #set number of ticks and their labels
                 self.axes.set_xticks(xticks)
