@@ -38,4 +38,4 @@ repos:
     -   id: mypy
         files: ^music_mood_analysis/
         additional_dependencies: [matplotlib==3.2.1]
-        args: []
+        args: [--ignore-missing-imports]

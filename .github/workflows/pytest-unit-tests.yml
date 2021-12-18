@@ -1,0 +1,34 @@
+name: Unit tests
+
+on: [push]
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 5
+      matrix:
+        python-version: ["3.8", "3.9", "3.10"]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Add conda to system path
+      run: |
+        # $CONDA is an environment variable pointing to the root of the miniconda directory
+        echo $CONDA/bin >> $GITHUB_PATH
+    - name: Install src dependencies
+      run: |
+        conda env update --file environment.yml --name test-env
+    - name: Install test dependencies
+      working-directory: tests
+      run: |
+        conda install pip
+        pip install -r ../requirements.txt
+        pip install -r requirements.txt
+    - name: Test with pytest
+      working-directory: tests
+      run: |
+        python run_tests.py --slow --no-report
