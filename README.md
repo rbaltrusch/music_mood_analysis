@@ -1,3 +1,6 @@
+[![Unit tests](https://github.com/rbaltrusch/music_mood_analysis/actions/workflows/pytest-unit-tests.yml/badge.svg)](https://github.com/rbaltrusch/music_mood_analysis/actions/workflows/pytest-unit-tests.yml)
+[![Pylint](https://github.com/rbaltrusch/music_mood_analysis/actions/workflows/pylint.yml/badge.svg)](https://github.com/rbaltrusch/music_mood_analysis/actions/workflows/pylint.yml)
+
 # Music mood analysis
 
 This analysis tool extracts tempo and tonality from music using digital signal processing techniques to analyse the mood of a piece of music.
