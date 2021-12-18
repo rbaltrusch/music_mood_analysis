@@ -36,14 +36,18 @@ def run_tests(args):
     else:
         command_line_args = []
 
-    if not (args.include_slow or args.include_all):
-        command_line_args.append('-m not slow')
 
-    if not (args.include_unreliable or args.include_all):
-        command_line_args.append('m not unreliable')
+    if not args.include_all:
+        excludes = []
+        if not args.include_slow:
+            excludes.append('slow')
+
+        if not args.include_unreliable:
+            excludes.append('unreliable')
+        command_line_args.append(f'-m not ({" or ".join(excludes)})')
 
     #pylint: disable=E1101
-    py.test.cmdline.main(args=command_line_args)
+    exit_code = py.test.cmdline.main(args=command_line_args)
 
     if args.report and args.open_in_browser:
         subprocess.call(f'start {report_filepath}', shell=True) #open test report
@@ -54,7 +58,11 @@ def run_tests(args):
         time.sleep(1)
         os.remove(report_filepath)
 
+    if int(exit_code) > 0:
+        sys.exit(int(exit_code))
+
 def get_parser():
+    """Returns the cli argument parser"""
     parser = argparse.ArgumentParser(description='Unit test interface')
 
     parser.add_argument('--all',
@@ -114,6 +122,7 @@ def get_parser():
     return parser
 
 def main():
+    """Main function"""
     parser = get_parser()
     args = parser.parse_args()
     run_tests(args)
