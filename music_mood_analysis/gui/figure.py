@@ -7,18 +7,21 @@ Created on Sat Jan 30 14:41:51 2021
 
 #pylint: disable=invalid-name
 
+from typing import Iterable, Optional
+from dataclasses import dataclass, field
+
 import matplotlib
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 matplotlib.use('TkAgg')
 
+@dataclass
 class DataSet:
     """Dataset class to be used for plotting using figure.Figure"""
 
-    def __init__(self, x=None, y=None, line_colour='#FFFFFF'):
-        self.x = x
-        self.y = y
-        self.line_colour = line_colour
-        self.annotations = []
+    x: Optional[Iterable[float]] = None
+    y: Optional[Iterable[float]] = None
+    line_colour: str = '#FFFFFF'
+    annotations: Optional[Iterable[str]] = field(default_factory=list)
 
     def __iter__(self):
         for item in [self.x, self.y, self.line_colour]:
