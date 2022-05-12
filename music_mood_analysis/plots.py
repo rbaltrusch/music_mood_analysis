@@ -4,9 +4,8 @@ Created on Tue Jan 12 14:57:06 2021
 
 @author: Korean_Crimson
 """
-
 import matplotlib.pyplot as plt
-from consts import PLOTTING_ENABLED
+from music_mood_analysis.consts import PLOTTING_ENABLED
 
 def plot(*datasets, normalised=False, xlabel='x', ylabel='y', title='Plot'):
     '''Plots a number of datasets on subplots. If only one dataset is specified,

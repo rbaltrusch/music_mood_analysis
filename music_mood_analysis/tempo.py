@@ -4,14 +4,14 @@ Created on Tue Jan 12 15:07:35 2021
 
 @author: Korean_Crimson
 """
-
 import collections
 from dataclasses import dataclass
 
 import numpy
-
-import consts
-from math_util import smooth, normalise, compute_Yss
+from music_mood_analysis import consts
+from music_mood_analysis.math_util import compute_Yss
+from music_mood_analysis.math_util import normalise
+from music_mood_analysis.math_util import smooth
 
 #pylint: disable=invalid-name
 

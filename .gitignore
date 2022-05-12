@@ -1,6 +1,7 @@
 #python
 __pycache__
 .pylint.d/
+**/*.egg-info
 
 #music files
 *.wav

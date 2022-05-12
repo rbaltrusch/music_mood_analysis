@@ -4,12 +4,13 @@ Created on Tue Jan 12 14:51:14 2021
 
 @author: Korean_Crimson
 """
-
 from dataclasses import dataclass
-import numpy
 
-import consts
-from math_util import compute_Yss, get_index_of, normalise
+import numpy
+from music_mood_analysis import consts
+from music_mood_analysis.math_util import compute_Yss
+from music_mood_analysis.math_util import get_index_of
+from music_mood_analysis.math_util import normalise
 
 #pylint: disable=invalid-name
 

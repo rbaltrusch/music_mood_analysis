@@ -4,9 +4,9 @@ Created on Tue Jan 12 14:43:43 2021
 
 @author: Korean_Crimson
 """
-
 from dataclasses import dataclass
-import consts
+
+from music_mood_analysis import consts
 
 @dataclass
 class DownConverter:

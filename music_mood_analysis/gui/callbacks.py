@@ -4,18 +4,19 @@ Created on Sat Jan 30 15:17:38 2021
 
 @author: Korean_Crimson
 """
-
-import os
 import math
+import os
 from tkinter.filedialog import askopenfilename
-import scipy.io.wavfile as siw
 
-import tonality
-import tempo
-from dataconversion import DownConverter
-import plots
-import consts
-from gui import app, config, figure
+import scipy.io.wavfile as siw
+from music_mood_analysis import consts
+from music_mood_analysis import plots
+from music_mood_analysis import tempo
+from music_mood_analysis import tonality
+from music_mood_analysis.dataconversion import DownConverter
+from music_mood_analysis.gui import app
+from music_mood_analysis.gui import config
+from music_mood_analysis.gui import figure
 
 def set_gui_config_defaults(*_):
     """Callback for reset button"""

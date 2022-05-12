@@ -26,6 +26,10 @@ To install all python dependencies, run the following in your command line:
 
     python -m pip install -r requirements.txt
 
+To run the package, simply run the following command from the repository root folder:
+
+    python -m music_mood_analysis
+
 ## Contributions
 
 To contribute to this repository, please read the [contribution guidelines](CONTRIBUTING.md).

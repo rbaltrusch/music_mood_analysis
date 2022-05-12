@@ -4,10 +4,11 @@ Created on Sat Jan 30 15:13:17 2021
 
 @author: Korean_Crimson
 """
-
 #pylint: disable=E0611,E0401
 import tkinter as tk
-from gui.components import Tk, Gui
+
+from music_mood_analysis.gui.components import Gui
+from music_mood_analysis.gui.components import Tk
 
 root = Tk()
 app = Gui(root)

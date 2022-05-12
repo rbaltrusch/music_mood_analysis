@@ -4,12 +4,17 @@ Created on Sun Jan 31 17:57:26 2021
 
 @author: Korean_Crimson
 """
-
 #pylint: disable=import-error
 #pylint: disable=line-too-long
 import os
 import tkinter as tk
-from gui import root, app, callbacks, figure, config, components
+
+from music_mood_analysis.gui import app
+from music_mood_analysis.gui import callbacks
+from music_mood_analysis.gui import components
+from music_mood_analysis.gui import config
+from music_mood_analysis.gui import figure
+from music_mood_analysis.gui import root
 
 def init():
     """Initializes root and all views of gui app"""
@@ -32,7 +37,7 @@ def init_root():
     app.data['error'].trace_add('write', callbacks.set_error)
 
     #set window icon
-    icon_path = os.path.join('gui', 'media', 'icon.png')
+    icon_path = os.path.join(os.path.dirname(__file__), 'media', 'icon.png')
     root.set_icon(icon_path)
 
 def init_file_view():

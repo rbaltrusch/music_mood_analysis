@@ -21,9 +21,6 @@ def run_tests(args):
     and open the report in the browser.
     """
     package_path = os.path.join('..', PACKAGE_NAME)
-    sys.path.append(package_path)
-    sys.path.append('..')
-
     timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
     report_filename = f'{timestamp}_report.html'
     report_filepath = os.path.join(REPORTS_PATH, report_filename)
