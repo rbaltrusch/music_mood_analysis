@@ -19,3 +19,6 @@ report.html
 #pytest-cov
 .coverage
 htmlcov
+
+#other
+.vscode/
