@@ -19,7 +19,6 @@ def test_get_tonality(note_counts, expected):
     tonality_ = tonality_analyser._get_tonality(note_counts)
     assert tonality_ == expected, f'Expected tonality = {expected}, but got {tonality_}'
 
-@pytest.mark.xfail()
 @pytest.mark.parametrize("note_counts", [
         [random.randint(0, 100) for _ in range(4)],
         [random.randint(0, 100) for _ in range(4)],
@@ -27,7 +26,8 @@ def test_get_tonality(note_counts, expected):
         ])
 def test_get_tonality_bad_args(note_counts):
     tonality_analyser = tonality.TonalityAnalyser(None)
-    tonality_analyser._get_tonality(note_counts)
+    with pytest.raises(IndexError):
+        tonality_analyser._get_tonality(note_counts)
 
 @pytest.mark.usefixtures("samplerate")
 @pytest.mark.usefixtures("data_a")

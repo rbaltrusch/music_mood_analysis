@@ -9,7 +9,7 @@ import math
 import random
 import numpy
 import pytest
-from consts import MUSICAL_NOTES as notes
+from music_mood_analysis.consts import MUSICAL_NOTES as notes
 
 def _musical_note(freq=440, samplerate=44100, time=2):
     amount_of_data_points = round(samplerate * time)
@@ -63,7 +63,7 @@ def random_rhythmic_data(down_samplerate):
     samplerate = down_samplerate
     frequency = samplerate / 2 #120 bpm
     samples = samplerate * 5
-    
+
     sine = [math.sin(2 * math.pi * x / frequency) for x in range(samples)]
     noisy = [random.randint(25, 100) * x for x in sine]
     capped = [random.randint(0, 75) if x < 0 else x for x in noisy] #cap negative

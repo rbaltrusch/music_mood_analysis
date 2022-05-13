@@ -8,6 +8,7 @@ Created on Fri Jan 15 18:27:08 2021
 import random
 import pytest
 import numpy
+import matplotlib.pyplot as plt
 
 from music_mood_analysis import plots
 
@@ -20,7 +21,8 @@ from music_mood_analysis import plots
          {'title': 'my title', 'xlabel': 'label x', 'ylabel': 'label y'}),
         ([numpy.random.rand(100)], {})
         ])
-def test_plot(datasets, kwargs):
+def test_plot(monkeypatch, datasets, kwargs):
+    monkeypatch.setattr(plt, 'show', lambda: None)
     plots.plot(*datasets, **kwargs)
 
 def test_plot_disabled():

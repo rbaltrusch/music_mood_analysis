@@ -9,11 +9,6 @@ import pytest
 import numpy
 from music_mood_analysis import math_util
 
-@pytest.mark.xfail()
-@pytest.mark.parametrize('sampleamount', [[], 'test', {'a': 2}, {'b'}])
-def test_init_zero_list_bad_args(sampleamount):
-    math_util.init_zero_list(sampleamount)
-
 
 @pytest.mark.usefixtures('samplerate')
 @pytest.mark.parametrize('data', [
@@ -33,19 +28,17 @@ def test_compute_Yss(samplerate, data):
     assert Yss_f, 'Yss_f should not be empty'
     assert all(x > 0 for x in Yss_f), 'All elements of Yss_f should be positive and non-zero'
 
-@pytest.mark.xfail()
 @pytest.mark.usefixtures('samplerate')
 @pytest.mark.parametrize('data', [[]])
 def test_compute_Yss_bad_args(samplerate, data):
-    #pylint: disable=C0103
-    math_util.compute_Yss(samplerate, data)
+    with pytest.raises(Exception):
+        math_util.compute_Yss(samplerate, data)
 
-@pytest.mark.xfail()
 @pytest.mark.usefixtures('samplerate')
 @pytest.mark.parametrize('data', [[1], [1, -1]])
 def test_compute_Yss_empty_Yss_f(samplerate, data):
-    _, Yss_f = math_util.compute_Yss(samplerate, data)
-    assert Yss_f, 'Yss_f should not be empty'
+    with pytest.raises(ValueError):
+        math_util.compute_Yss(samplerate, data)
 
 
 @pytest.mark.parametrize('func,data,expected', [
@@ -61,14 +54,14 @@ def test_get_index_of(func, data, expected):
     message = f'Expected {expected}, but got {index} from math_util.get_index_of({func}, {data})'
     assert index == expected, message
 
-@pytest.mark.xfail()
-@pytest.mark.parametrize('func,data', [
-        (min, []),
-        (max, []),
-        (lambda *args: 1, [1, 2, 3])
+@pytest.mark.parametrize('func,data,exception_type', [
+        (min, [], ValueError),
+        (max, [], ValueError),
+        (lambda *args: 1, [1, 2, 3], TypeError)
         ])
-def test_get_index_of_bad_args(func, data):
-    math_util.get_index_of(func, data)
+def test_get_index_of_bad_args(func, data, exception_type):
+    with pytest.raises(exception_type):
+        math_util.get_index_of(func, data)
 
 @pytest.mark.parametrize("frequency,expected", [
         (-1, 0),
