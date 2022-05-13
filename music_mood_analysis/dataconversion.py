@@ -8,6 +8,7 @@ from dataclasses import dataclass
 
 from music_mood_analysis import consts
 
+
 @dataclass
 class DownConverter:
     """Downconverts data from one samplerate to a lower one"""
@@ -18,7 +19,7 @@ class DownConverter:
 
     def downconvert(self, data: list) -> list:
         """Returns the data downsampled by the conversion_ratio."""
-        return [self._mono(d) for d in data[::self.conversion_ratio]]
+        return [self._mono(d) for d in data[:: self.conversion_ratio]]
 
     def downconvert_chunk(self, data: list, chunk_index=0) -> list:
         """Returns the downsampled samplerate and data for a specified data chunk.
@@ -38,7 +39,7 @@ class DownConverter:
         """Converts one stereo data point to one mono data point"""
         try:
             return int(sum(stereo_data_point))
-        except TypeError: #not iterable
+        except TypeError:  # not iterable
             return int(stereo_data_point)
 
     @property

@@ -10,7 +10,10 @@ import numpy
 
 Number = Union[float, int]
 
-def compute_Yss(samplerate: Number, data: numpy.ndarray) -> Tuple[List[Number], List[Number]]:
+
+def compute_Yss(
+    samplerate: Number, data: numpy.ndarray
+) -> Tuple[List[Number], List[Number]]:
     """Construct a one-sided amplitude spectrum of Y(t)
 
     Input args:
@@ -21,12 +24,15 @@ def compute_Yss(samplerate: Number, data: numpy.ndarray) -> Tuple[List[Number], 
         Yss: one-dimensional discrete Fourier Transform
         Yss_f: Discrete Fourier Transform sample non-zero positive frequencies
     """
-    #pylint: disable=C0103
+    # pylint: disable=C0103
     Yss = numpy.fft.fft(data)
     time_step = 1 / samplerate
     Yss_f = numpy.fft.fftfreq(Yss.size, time_step)
-    Yss, Yss_f = list(zip(*[(amplitude, freq) for amplitude, freq in zip(Yss, Yss_f) if freq > 0]))
+    Yss, Yss_f = list(
+        zip(*[(amplitude, freq) for amplitude, freq in zip(Yss, Yss_f) if freq > 0])
+    )
     return list(Yss), list(Yss_f)
+
 
 def get_index_of(func, data: List[Number]) -> int:
     """Returns index of the data point which func (should be in-built min or max)
@@ -45,9 +51,11 @@ def get_index_of(func, data: List[Number]) -> int:
     index, _ = func(enumerate(data), key=lambda x: x[1])
     return index
 
+
 def smooth(data: List[Number], factor=1) -> List[Number]:
     """Used to smooth data, returns list"""
-    return [sum(data[i:i+factor]) for i in range(len(data) - factor + 1)]
+    return [sum(data[i : i + factor]) for i in range(len(data) - factor + 1)]
+
 
 def normalise(number: Number, lower_bound: Number, higher_bound: Number) -> Number:
     """Returns number normalised to be within the lower or higher bound, or 0 if negative"""

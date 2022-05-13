@@ -14,16 +14,19 @@ from music_mood_analysis.math_util import compute_Yss
 from music_mood_analysis.math_util import normalise
 from music_mood_analysis.math_util import smooth
 
-#pylint: disable=invalid-name
+# pylint: disable=invalid-name
+
 
 @dataclass
 class DataPoint:
     """Stores index, value and decayed_value attributes for local maximum value algorithm"""
+
     index: int
     value: float
     decayed_value: float
 
-#pylint: disable=too-many-instance-attributes
+
+# pylint: disable=too-many-instance-attributes
 @dataclass
 class TempoAnalyser:
     """Analyses tempo of data by determining distance between local amplitude maxima"""
@@ -59,7 +62,7 @@ class TempoAnalyser:
                 if under_min:
                     self._local_maximum_values.pop()
                 self._local_maximum_values.append(DataPoint(i, x, x))
-            self._local_maximum_values[-1].decayed_value *= (1 - consts.DECAY)
+            self._local_maximum_values[-1].decayed_value *= 1 - consts.DECAY
 
     def _compute_beat_distances(self) -> List[int]:
         indices = [data_point.index for data_point in self._local_maximum_values]
@@ -73,7 +76,9 @@ class TempoAnalyser:
     def _compute_bpm(self) -> int:
         """This section finds the tempo of the piece"""
         beat_dists = self._compute_beat_distances()
-        filtered_dists = [d for d in beat_dists if self.beat_min_dist <= d <= self.beat_max_dist]
+        filtered_dists = [
+            d for d in beat_dists if self.beat_min_dist <= d <= self.beat_max_dist
+        ]
         if not filtered_dists:
             return 0
 
@@ -105,7 +110,9 @@ class FFTTempoAnalyser:
         Yss, Yss_f = compute_Yss(self.samplerate, data)
         freq_dict: DefaultDict[float, int] = collections.defaultdict(int)
         for amplitude, freq in zip(map(abs, Yss), Yss_f):
-            normalised_freq = normalise(freq, lower_bound=self.BPS_MIN, higher_bound=self.BPS_MAX)
+            normalised_freq = normalise(
+                freq, lower_bound=self.BPS_MIN, higher_bound=self.BPS_MAX
+            )
             rounded_freq = round(normalised_freq, 2)
             freq_dict[rounded_freq] += amplitude
         bpm = round(60 * max(freq_dict.items(), key=lambda x: x[1])[0])

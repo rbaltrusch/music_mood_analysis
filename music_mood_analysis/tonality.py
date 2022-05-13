@@ -13,7 +13,8 @@ from music_mood_analysis.math_util import compute_Yss
 from music_mood_analysis.math_util import get_index_of
 from music_mood_analysis.math_util import normalise
 
-#pylint: disable=invalid-name
+# pylint: disable=invalid-name
+
 
 @dataclass
 class TonalityAnalyser:
@@ -29,7 +30,7 @@ class TonalityAnalyser:
         self.normalised_note_counts: List[int] = []
 
     def analyse(self, data: numpy.ndarray) -> str:
-        """"Tonality analysis using weighted note occurence. Returns tonality (e.g. A minor)"""
+        """ "Tonality analysis using weighted note occurence. Returns tonality (e.g. A minor)"""
         adjusted_note_counts = self._compute_weighted_note_counts(data)
         self.musical_root_index = get_index_of(max, adjusted_note_counts)
         self._set_normalised_note_counts(adjusted_note_counts)
@@ -40,11 +41,14 @@ class TonalityAnalyser:
         weighted_note_counts = [0] * 12
         amplitudes, frequencies = compute_Yss(self.samplerate, data)
         for amplitude, freq in zip(amplitudes, frequencies):
-            normalised_frequency = normalise(freq,
-                                             lower_bound=self.MUSICAL_NOTE_LOWER_BOUND,
-                                             higher_bound=self.MUSICAL_NOTE_LOWER_BOUND * 2
-                                             )
-            freq_diffs = [abs(normalised_frequency - f) for f in self.MUSICAL_NOTE_FREQUENCIES]
+            normalised_frequency = normalise(
+                freq,
+                lower_bound=self.MUSICAL_NOTE_LOWER_BOUND,
+                higher_bound=self.MUSICAL_NOTE_LOWER_BOUND * 2,
+            )
+            freq_diffs = [
+                abs(normalised_frequency - f) for f in self.MUSICAL_NOTE_FREQUENCIES
+            ]
             min_index: int = get_index_of(min, freq_diffs)
             weighted_note_counts[min_index] += abs(amplitude)
         return weighted_note_counts
@@ -58,11 +62,11 @@ class TonalityAnalyser:
     def _determine_tonality(self) -> str:
         tonality = self._get_tonality(self.normalised_note_counts)
         key = self.MUSICAL_NOTE_NAMES[self.musical_root_index]
-        return f'{key} {tonality}'
+        return f"{key} {tonality}"
 
     @staticmethod
     def _get_tonality(note_counts: List[int]):
         """returns 'minor' if amplitude of third semitone (minor third) is higher than the
         amplitude of fourth semitone (major third), else returns 'major'.
         """
-        return 'minor' if note_counts[3] > note_counts[4] else 'major'
+        return "minor" if note_counts[3] > note_counts[4] else "major"
