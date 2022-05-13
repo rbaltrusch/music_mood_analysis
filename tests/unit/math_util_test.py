@@ -63,15 +63,16 @@ def test_get_index_of_bad_args(func, data, exception_type):
     with pytest.raises(exception_type):
         math_util.get_index_of(func, data)
 
-@pytest.mark.parametrize("frequency,expected", [
-        (-1, 0),
-        (0, 0),
-        (220, 440),
-        (440, 440),
-        (880, 880),
-        (1000, 500)
+@pytest.mark.parametrize("frequency,expected,lower,higher", [
+        (-1, 0, 440, 880),
+        (0, 0, 440, 880),
+        (220, 440, 440, 880),
+        (440, 440, 440, 880),
+        (880, 880, 440, 880),
+        (1000, 500, 440, 880),
+        (1000, 500, 440, 440),
         ])
-def test_normalise(frequency, expected):
-    normalised_frequency = math_util.normalise(frequency, lower_bound=440, higher_bound=880)
+def test_normalise(frequency, expected, lower, higher):
+    normalised_frequency = math_util.normalise(frequency, lower_bound=lower, higher_bound=higher)
     assert isinstance(normalised_frequency, (int, float)), 'tonality._normalise should return an int or float'
     assert normalised_frequency == expected, f'Expected {expected}, but got {normalised_frequency}'

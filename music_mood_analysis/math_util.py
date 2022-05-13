@@ -54,7 +54,7 @@ def normalise(number: Number, lower_bound: Number, higher_bound: Number) -> Numb
     if number <= 0:
         return 0
 
-    if higher_bound / 2 < lower_bound:
+    if higher_bound / 2 <= lower_bound:
         higher_bound = lower_bound * 2
 
     while not lower_bound <= number <= higher_bound:
