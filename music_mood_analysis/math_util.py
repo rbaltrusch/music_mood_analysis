@@ -5,10 +5,12 @@ Created on Tue Jan 12 14:54:21 2021
 @author: Korean_Crimson
 """
 
-from typing import Tuple
+from typing import List, Tuple, Union
 import numpy
 
-def compute_Yss(samplerate: int, data: numpy.array) -> Tuple[list, list]:
+Number = Union[float, int]
+
+def compute_Yss(samplerate: Number, data: numpy.ndarray) -> Tuple[List[Number], List[Number]]:
     """Construct a one-sided amplitude spectrum of Y(t)
 
     Input args:
@@ -26,7 +28,7 @@ def compute_Yss(samplerate: int, data: numpy.array) -> Tuple[list, list]:
     Yss, Yss_f = list(zip(*[(amplitude, freq) for amplitude, freq in zip(Yss, Yss_f) if freq > 0]))
     return list(Yss), list(Yss_f)
 
-def get_index_of(func, data: list) -> int:
+def get_index_of(func, data: List[Number]) -> int:
     """Returns index of the data point which func (should be in-built min or max)
     would return if called by itself.
 
@@ -43,11 +45,11 @@ def get_index_of(func, data: list) -> int:
     index, _ = func(enumerate(data), key=lambda x: x[1])
     return index
 
-def smooth(data: list, factor=1) -> list:
+def smooth(data: List[Number], factor=1) -> List[Number]:
     """Used to smooth data, returns list"""
     return [sum(data[i:i+factor]) for i in range(len(data) - factor + 1)]
 
-def normalise(number: float, lower_bound: float, higher_bound: float) -> float:
+def normalise(number: Number, lower_bound: Number, higher_bound: Number) -> Number:
     """Returns number normalised to be within the lower or higher bound, or 0 if negative"""
     if number <= 0:
         return 0

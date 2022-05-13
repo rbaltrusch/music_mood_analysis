@@ -14,7 +14,7 @@ BPS_MIN = 1.5 #how many beats per second we detect at least
 DECAY = 0.0001 #Amplitude decay of current max val between beat_distance_min and beat_distance_max
 
 #12 frequencies starting from middle A440, up a semitone each.
-MUSICAL_NOTES = {'A': 440,
+MUSICAL_NOTES = {'A': 440.0,
                  'A#': 466.16,
                  'B': 493.88,
                  'C': 523.25,

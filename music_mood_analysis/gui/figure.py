@@ -21,7 +21,7 @@ class DataSet:
     x: Optional[Iterable[float]] = None
     y: Optional[Iterable[float]] = None
     line_colour: str = '#FFFFFF'
-    annotations: Optional[Iterable[str]] = field(default_factory=list)
+    annotations: Iterable[str] = field(default_factory=list)
 
     def __iter__(self):
         for item in [self.x, self.y, self.line_colour]:
