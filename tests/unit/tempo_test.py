@@ -56,10 +56,11 @@ def test_compute_bpm_random(down_samplerate, beat_distances, expected):
 @pytest.mark.slow
 @pytest.mark.usefixtures("down_samplerate")
 @pytest.mark.usefixtures("random_rhythmic_data")
-def test_analyse(down_samplerate, random_rhythmic_data):
+@pytest.mark.parametrize("tempo_analyser_type", [tempo.TempoAnalyser, tempo.FFTTempoAnalyser])
+def test_analyse(tempo_analyser_type, down_samplerate, random_rhythmic_data):
     """This test very rarely fails, due to the random input data"""
     data = random_rhythmic_data
-    tempo_analyser = tempo.TempoAnalyser(down_samplerate)
+    tempo_analyser = tempo_analyser_type(down_samplerate)
     bpm = tempo_analyser.analyse(data)
     assert isinstance(bpm, int), 'Bpm should be int'
 

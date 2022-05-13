@@ -91,7 +91,8 @@ class TempoAnalyser:
         """Beat constant max getter, maximum distance between beats"""
         return round(self.samplerate / self.BPS_MIN)
 
-#pylint: disable=too-few-public-methods
+
+@dataclass
 class FFTTempoAnalyser:
     """Analyses tempo of data using spectral analysis (fft)"""
 
