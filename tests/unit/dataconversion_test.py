@@ -64,3 +64,13 @@ def test_downconvert_chunk(samplerate, long_random_data, conversion_ratio, chunk
         expected_length = math.ceil(len(data) / conversion_ratio)
 
     assert len(downsampled_data) == expected_length, f'Downsampled data should of length {expected_length}'
+
+@pytest.mark.parametrize("samplerate, expected", [
+    (2, 1),
+    (3, 1),
+    (4, 2),
+    (5, 2),
+])
+def test_down_samplerate(samplerate, expected):
+    data_converter = DownConverter(samplerate, conversion_ratio=3)
+    assert data_converter.down_samplerate == expected
