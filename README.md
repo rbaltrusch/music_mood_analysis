@@ -10,12 +10,6 @@ The tool comes with a graphical user interface, which may be used to select the 
 
 ![Screenshot of the analysis GUI](music_mood_analysis/gui/media/screenshot2.png?raw=true "Screenshot of the analysis GUI")
 
-## Real-time
-
-The tool used to be configured to be used in a real-time analysis setting for analysis of ambient music. In the current configuration of the script, this is currently not possible anymore; however, it should not be too hard to re-instate the real-time functionality if required.
-
-The current configuration uses a .wav file to test the analysis functionality. It streams several data chunks per second from the file, which could be either be read from a file or be provided by a funnel script reading audio data directly from audio hardware. Such a script is not included in this repository, as it is hardware-specific.
-
 ## Getting started
 
 To get a copy of this repository, simply open up git bash in an empty folder and use the command:
@@ -29,6 +23,12 @@ To install all python dependencies, run the following in your command line:
 To run the package, simply run the following command from the repository root folder:
 
     python -m music_mood_analysis
+
+## Real-time
+
+The tool used to be configured to be used in a real-time analysis setting for analysis of ambient music. In the current configuration of the script, this is currently not possible anymore; however, it should not be too hard to re-instate the real-time functionality if required.
+
+The current configuration uses a .wav file to test the analysis functionality. It streams several data chunks per second from the file, which could be either be read from a file or be provided by a funnel script reading audio data directly from audio hardware. Such a script is not included in this repository, as it is hardware-specific.
 
 ## Contributions
 
