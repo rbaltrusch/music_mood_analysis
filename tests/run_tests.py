@@ -83,13 +83,6 @@ def get_parser():
                         help='Includes unreliable tests'
                         )
 
-    parser.add_argument('--db-generation',
-                        '-g',
-                        dest='include_generate',
-                        action='store_true',
-                        help='Includes database generation tests'
-                        )
-
     parser.add_argument('--debug',
                         '-d',
                         action='store_true',
