@@ -24,6 +24,44 @@ To run the package, simply run the following command from the repository root fo
 
     python -m music_mood_analysis
 
+## Command line interface
+
+The music analysis tool can also be used directly with its command line interface, bypassing the graphical interface completely:
+
+```
+usage: __main__.py [-h] [--tempo-analysis {fft,lmv}] [--chunk-size CHUNK_SIZE]
+                   [--downsample DOWNSAMPLE] [--min-bps MIN_BPS]
+                   [--max-bps MAX_BPS] [--lmv-decay LMV_DECAY]
+                   filepath
+
+positional arguments:
+  filepath              The path to the audio file to be analysed
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --tempo-analysis {fft,lmv}, -t {fft,lmv}
+                        The tempo analysis method to be used
+  --chunk-size CHUNK_SIZE, -c CHUNK_SIZE
+                        The size (in seconds) of audio data chunk to be
+                        analysed at once
+  --downsample DOWNSAMPLE, -d DOWNSAMPLE
+                        The factor by which to downsample audio data during
+                        analysis
+  --min-bps MIN_BPS     The minimum amount of beats per second to be
+                        considered during tempo analysis
+  --max-bps MAX_BPS     The maximum amount of beats per second to be
+                        considered during tempo analysis
+  --lmv-decay LMV_DECAY
+                        The amplitude decay of local maxima during lmv tempo
+                        analysis
+```
+
+To bring up this help message, run:
+
+```
+python -m music_mood_analysis -h
+```
+
 ## Real-time
 
 The tool used to be configured to be used in a real-time analysis setting for analysis of ambient music. In the current configuration of the script, this is currently not possible anymore; however, it should not be too hard to re-instate the real-time functionality if required.
