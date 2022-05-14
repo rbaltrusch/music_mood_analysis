@@ -4,6 +4,7 @@ Created on Tue Jan 12 15:07:35 2021
 
 @author: Korean_Crimson
 """
+from abc import ABC, abstractmethod
 import collections
 from dataclasses import dataclass
 from typing import DefaultDict, Iterable, List
@@ -26,14 +27,22 @@ class DataPoint:
     decayed_value: float
 
 
-# pylint: disable=too-many-instance-attributes
 @dataclass
-class TempoAnalyser:
-    """Analyses tempo of data by determining distance between local amplitude maxima"""
-
-    samplerate: int
+class AbstractTempoAnalyser(ABC):
+    samplerate: float
     BPS_MIN: float = consts.BPS_MIN
     BPS_MAX: float = consts.BPS_MAX
+
+    @abstractmethod
+    def analyse(self, data: numpy.ndarray) -> int:
+        """Analyses the input data and returns the computed bpm"""
+
+
+# pylint: disable=too-many-instance-attributes
+@dataclass
+class TempoAnalyser(AbstractTempoAnalyser):
+    """Analyses tempo of data by determining distance between local amplitude maxima"""
+
     DECAY: float = consts.DECAY
 
     def __post_init__(self):
@@ -41,7 +50,7 @@ class TempoAnalyser:
         self._local_maximum_values: List[DataPoint] = []
         self.processed_data: List[float] = []
 
-    def analyse(self, data: list) -> int:
+    def analyse(self, data: numpy.ndarray) -> int:
         """Analyses the input data and returns the computed bpm"""
         self._process_data(data)
         self._compute_local_maximum_values()
@@ -97,13 +106,8 @@ class TempoAnalyser:
         return round(self.samplerate / self.BPS_MIN)
 
 
-@dataclass
-class FFTTempoAnalyser:
+class FFTTempoAnalyser(AbstractTempoAnalyser):
     """Analyses tempo of data using spectral analysis (fft)"""
-
-    samplerate: float
-    BPS_MIN: float = consts.BPS_MIN
-    BPS_MAX: float = consts.BPS_MAX
 
     def analyse(self, data: numpy.ndarray) -> int:
         """Analyses the input data and returns the computed bpm"""
