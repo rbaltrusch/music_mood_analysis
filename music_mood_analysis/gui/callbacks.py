@@ -78,8 +78,7 @@ def _downconvert():
     #downconvert
     down_converter = DownConverter(samplerate, conversion_ratio, chunk_size)
     chunk_data = down_converter.downconvert_chunk(data, chunk_index=0)
-    chunk_sample_rate = math.ceil(samplerate/conversion_ratio)
-    return chunk_data, chunk_sample_rate
+    return chunk_data, down_converter.down_samplerate
 
 def _analyse_tempo(chunk_data, chunk_sample_rate):
     tempo_analyser = tempo.TempoAnalyser(chunk_sample_rate)

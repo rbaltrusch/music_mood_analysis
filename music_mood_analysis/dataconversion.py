@@ -4,6 +4,8 @@ Created on Tue Jan 12 14:43:43 2021
 
 @author: Korean_Crimson
 """
+
+import math
 from dataclasses import dataclass
 
 from music_mood_analysis import consts
@@ -46,3 +48,8 @@ class DownConverter:
     def chunk_length(self) -> int:
         """Getter for chunk_length, returns chunk_size times samplerate or 0 if negative"""
         return max(round(self.chunk_size * self.samplerate), 0)
+
+    @property
+    def down_samplerate(self) -> int:
+        """The downsampled samplerate"""
+        return math.ceil(self.samplerate / self.conversion_ratio)
