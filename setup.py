@@ -24,11 +24,11 @@ setuptools.setup(
     # requirements.txt must be included in MANIFEST.in for this to work.
     install_requires=project_dir.joinpath("requirements.txt").read_text().split("\n"),
     zip_safe=False,
-    license="MIT",
+    license="AGPLv3",
     classifiers=[
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
-        "License :: OSI Approved :: MIT License",
+        "License :: OSI Approved :: AGPLv3 License",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3 :: Only",
