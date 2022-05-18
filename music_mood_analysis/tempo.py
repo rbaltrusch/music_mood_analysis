@@ -29,6 +29,8 @@ class DataPoint:
 
 @dataclass
 class AbstractTempoAnalyser(ABC):
+    """Analyses tempo"""
+
     samplerate: float
     BPS_MIN: float = consts.BPS_MIN
     BPS_MAX: float = consts.BPS_MAX
@@ -106,7 +108,7 @@ class TempoAnalyser(AbstractTempoAnalyser):
         return round(self.samplerate / self.BPS_MIN)
 
 
-class FFTTempoAnalyser(AbstractTempoAnalyser):
+class FFTTempoAnalyser(AbstractTempoAnalyser):  # pylint: disable=too-few-public-methods
     """Analyses tempo of data using spectral analysis (fft)"""
 
     def analyse(self, data: numpy.ndarray) -> int:

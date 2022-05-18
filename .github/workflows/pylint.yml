@@ -21,4 +21,4 @@ jobs:
         pip install -r requirements.txt
     - name: Analysing the code with pylint
       run: |
-        pylint music_mood_analysis
+        pylint --fail-under=9.9 music_mood_analysis
