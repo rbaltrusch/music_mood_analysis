@@ -26,6 +26,7 @@ jobs:
       working-directory: tests
       run: |
         conda install pip
+        pip install --upgrade-pip
         pip install -r ../requirements.txt
         pip install -r requirements.txt
     - name: Test with pytest
