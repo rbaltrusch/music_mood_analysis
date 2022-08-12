@@ -2,4 +2,5 @@ include README.md
 include LICENSE
 include requirements.txt
 include music_mood_analysis/py.typed
+include music_mood_analysis/gui/media/icon.png
 recursive-exclude tests *
