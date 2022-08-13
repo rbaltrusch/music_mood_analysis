@@ -8,7 +8,7 @@ project_dir = Path(__file__).parent
 
 setuptools.setup(
     name="music_mood_analysis",
-    version="1.0.2",
+    version="1.0.3",
     description="Music mood analysis",
     long_description=project_dir.joinpath("README.md").read_text(encoding="utf-8"),
     long_description_content_type="text/markdown",
@@ -16,7 +16,6 @@ setuptools.setup(
     author="Richard Baltrusch",
     url="https://github.com/rbaltrusch/music_mood_analysis",
     packages=setuptools.find_packages("."),
-    package_dir={"": "."},
     python_requires=">=3.8",
     include_package_data=True,
     package_data={"music_mood_analysis": ["py.typed"]}, # for mypy
