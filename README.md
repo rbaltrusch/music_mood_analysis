@@ -8,7 +8,7 @@ This analysis tool extracts tempo and tonality from music using digital signal p
 
 The tool comes with a graphical user interface, which may be used to select the file to be analysed, configure the analysis parameters, run the analysis and finally inspect the analysis results.
 
-![Screenshot of the analysis GUI](music_mood_analysis/gui/media/screenshot2.png?raw=true "Screenshot of the analysis GUI")
+![Screenshot of the analysis GUI](https://github.com/rbaltrusch/music_mood_analysis/blob/master/music_mood_analysis/gui/media/screenshot2.png?raw=true "Screenshot of the analysis GUI")
 
 ## Getting started
 
@@ -70,11 +70,7 @@ The current configuration uses a .wav file to test the analysis functionality. I
 
 ## Contributions
 
-To contribute to this repository, please read the [contribution guidelines](CONTRIBUTING.md).
-
-## Documentation
-
-More documentation is planned to be included in the [wiki](https://github.com/rbaltrusch/music_mood_analysis/wiki).
+To contribute to this repository, please read the [contribution guidelines](https://github.com/rbaltrusch/music_mood_analysis/blob/master/CONTRIBUTING.md).
 
 ## Python
 
