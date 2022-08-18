@@ -12,16 +12,9 @@ The tool comes with a graphical user interface, which may be used to select the 
 
 ## Getting started
 
-To get a copy of this repository, simply open up git bash in an empty folder and use the command:
+To run the package, install it using pip, then run it using:
 
-    $ git clone https://github.com/rbaltrusch/music_mood_analysis
-
-To install all python dependencies, run the following in your command line:
-
-    python -m pip install -r requirements.txt
-
-To run the package, simply run the following command from the repository root folder:
-
+    python -m pip install music_mood_analysis
     python -m music_mood_analysis
 
 ## Command line interface
