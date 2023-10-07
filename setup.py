@@ -28,7 +28,10 @@ setuptools.setup(
     license="AGPLv3",
     classifiers=[
         "Development Status :: 4 - Beta",
+        "Environment :: Console",
         "Intended Audience :: Developers",
+        "Intended Audience :: End Users/Desktop",
+        "Intended Audience :: Science/Research",
         "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
@@ -36,6 +39,12 @@ setuptools.setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Topic :: Artistic Software",
+        "Topic :: Desktop Environment",
+        "Topic :: Multimedia",
+        "Topic :: Multimedia :: Sound/Audio",
+        "Topic :: Multimedia :: Sound/Audio :: Analysis",
+        "Topic :: Scientific/Engineering",
         "Typing :: Typed",
     ],
 )
