@@ -20,6 +20,7 @@ jobs:
         pip install setuptools
         pip install -e .
     - name: Install test dependencies
+      working-directory: tests
       run: |
         sudo apt install libopenblas-dev # scipy
         pip install -r requirements.txt
