@@ -39,6 +39,9 @@ setuptools.setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        # 3.12 doesn't work with setup.py, see: https://stackoverflow.com/questions/73533994/sub-package-not-importable-after-installation  pylint: disable=line-too-long
+        # "Programming Language :: Python :: 3.12",
         "Topic :: Artistic Software",
         "Topic :: Desktop Environment",
         "Topic :: Multimedia",
