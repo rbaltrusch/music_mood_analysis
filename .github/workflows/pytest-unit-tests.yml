@@ -22,8 +22,8 @@ jobs:
     - name: Install test dependencies
       working-directory: tests
       run: |
-        sudo apt-get install
-        sudo apt install libopenblas-dev # scipy
+        sudo apt-get update
+        sudo apt-get install libopenblas-dev # scipy
         pip install -r requirements.txt
     - name: Test with pytest
       working-directory: tests
